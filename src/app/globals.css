@@ -66,3 +66,54 @@ body {
     letter-spacing: 0.06em;
   }
 }
+
+/*
+ * Syntax highlighting (rehype-highlight/highlight.js token classes), mapped
+ * onto the site's own palette instead of a stock hljs theme. This colors by
+ * token TYPE only -- keywords vs. functions vs. strings/numbers vs.
+ * comments -- a tokenizer can't know that e.g. `jobs` is a table name and
+ * `country` is a column, since both are just plain identifiers.
+ */
+.hljs {
+  color: var(--background);
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-operator {
+  color: #7fa8ff; /* lighter accent blue, readable on black */
+  font-weight: 700;
+}
+.hljs-built_in,
+.hljs-title,
+.hljs-title.function_,
+.hljs-title.class_ {
+  color: #b892ff; /* lighter violet */
+  font-weight: 700;
+}
+.hljs-string,
+.hljs-regexp {
+  color: #5fd6c4; /* lighter teal */
+}
+.hljs-number,
+.hljs-literal {
+  color: var(--accent-warm);
+}
+.hljs-type,
+.hljs-symbol,
+.hljs-attr {
+  color: var(--accent-danger);
+}
+.hljs-comment,
+.hljs-quote {
+  color: #8a8378;
+  font-style: italic;
+}
+.hljs-variable,
+.hljs-params,
+.hljs-attribute {
+  color: var(--accent-lime);
+}
+.hljs-meta,
+.hljs-punctuation {
+  color: #8a8378;
+}

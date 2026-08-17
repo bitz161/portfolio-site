@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
 import { getPublishedPost } from "@/lib/blog";
 
 export const dynamic = "force-dynamic";
@@ -49,7 +50,7 @@ export default async function BlogPostPage(
       )}
 
       <div className="card-brutal prose prose-headings:font-serif prose-a:text-accent prose-strong:text-foreground-bright prose-code:before:content-none prose-code:after:content-none prose-pre:card-brutal-sm prose-pre:bg-foreground-bright prose-code:rounded-none prose-img:card-brutal-sm mt-10 max-w-none bg-card p-8">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
           {post.content}
         </ReactMarkdown>
       </div>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
 import { getProject } from "@/lib/projects";
 import { TrackBadge, StatusBadge, TypeBadge, SkillTag } from "@/components/Badge";
 
@@ -63,7 +64,7 @@ export default async function ProjectDetailPage(
 
       {project.details ? (
         <div className="card-brutal prose prose-headings:font-serif prose-a:text-accent prose-strong:text-foreground-bright prose-code:before:content-none prose-code:after:content-none prose-pre:card-brutal-sm prose-pre:bg-foreground-bright prose-code:rounded-none prose-img:card-brutal-sm mt-14 max-w-none bg-card p-8">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
             {project.details}
           </ReactMarkdown>
         </div>
