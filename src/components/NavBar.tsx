@@ -7,7 +7,8 @@ const links = [
   { href: "/about", label: "About" },
 ];
 
-export default function NavBar() {
+export default function NavBar({ isAdmin = false }: { isAdmin?: boolean }) {
+  const navLinks = isAdmin ? [...links, { href: "/admin", label: "Admin" }] : links;
   return (
     <header className="border-b-[3px] border-border bg-background">
       <nav className="mx-auto flex max-w-4xl items-center justify-between px-6 py-6">
@@ -18,7 +19,7 @@ export default function NavBar() {
           Bitz Garcia
         </Link>
         <ul className="flex gap-6 text-xs font-bold tracking-wide text-foreground uppercase sm:gap-8">
-          {links.map((link) => (
+          {navLinks.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
