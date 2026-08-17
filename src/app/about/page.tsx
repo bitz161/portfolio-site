@@ -12,9 +12,9 @@ export default function AboutPage() {
         real datasets, real queries, real infrastructure decisions.
       </p>
       <p className="mt-4 leading-7 text-muted">
-        The backend behind this site (and the project write-ups themselves)
-        is still in progress — right now this is a frontend skeleton over
-        mock data.
+        Everything here is backed by a real MySQL database, not mock data —
+        projects, blog posts, and the pipeline that feeds them all read and
+        write against the same home-lab stack listed below.
       </p>
 
       <div className="card-brutal mt-12 bg-card p-6">
