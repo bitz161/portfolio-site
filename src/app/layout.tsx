@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Archivo_Black, Space_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
-const inter = Inter({
+const spaceMono = Space_Mono({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
-const fraunces = Fraunces({
+const archivoBlack = Archivo_Black({
   variable: "--font-serif",
   subsets: ["latin"],
-  weight: ["500", "700", "900"],
-  style: ["normal", "italic"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${spaceMono.variable} ${archivoBlack.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <NavBar />

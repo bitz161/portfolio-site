@@ -33,12 +33,12 @@ export default async function BlogPostPage(
           day: "numeric",
         })}
       </span>
-      <h1 className="mt-3 font-serif text-4xl font-black tracking-tight text-foreground-bright sm:text-5xl">
+      <h1 className="mt-3 font-serif text-4xl text-foreground-bright sm:text-5xl">
         {post.title}
       </h1>
 
       {post.coverImageUrl && (
-        <div className="relative mt-9 aspect-video overflow-hidden border-2 border-border-soft">
+        <div className="card-brutal relative mt-9 aspect-video overflow-hidden">
           <Image
             src={post.coverImageUrl}
             alt={post.title}
@@ -48,7 +48,7 @@ export default async function BlogPostPage(
         </div>
       )}
 
-      <div className="prose prose-invert prose-headings:font-serif prose-headings:font-bold prose-a:text-accent prose-strong:text-foreground-bright mt-10 max-w-none">
+      <div className="card-brutal prose prose-headings:font-serif prose-a:text-accent prose-strong:text-foreground-bright prose-code:before:content-none prose-code:after:content-none prose-pre:card-brutal-sm prose-pre:bg-foreground-bright prose-code:rounded-none prose-img:card-brutal-sm mt-10 max-w-none bg-card p-8">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>
           {post.content}
         </ReactMarkdown>

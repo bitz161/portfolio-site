@@ -91,7 +91,7 @@ export default function AdminPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
-      <h1 className="font-serif text-4xl font-black tracking-tight text-foreground-bright">
+      <h1 className="font-serif text-4xl text-foreground-bright">
         Add Project
       </h1>
       <p className="mt-3 text-sm text-muted">
@@ -106,7 +106,7 @@ export default function AdminPage() {
             required
             value={title}
             onChange={(e) => handleTitleChange(e.target.value)}
-            className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+            className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
           />
         </div>
 
@@ -121,7 +121,7 @@ export default function AdminPage() {
             }}
             pattern="[a-z0-9]+(-[a-z0-9]+)*"
             title="Lowercase letters, numbers, and hyphens only (e.g. my-project)"
-            className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+            className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
           />
         </div>
 
@@ -133,7 +133,7 @@ export default function AdminPage() {
               value={track}
               onChange={(e) => setTrack(e.target.value)}
               placeholder="Database Management"
-              className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+              className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
             />
           </div>
           <div>
@@ -141,7 +141,7 @@ export default function AdminPage() {
             <select
               value={contentType}
               onChange={(e) => setContentType(e.target.value as ContentType)}
-              className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+              className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
             >
               <option value="docs">Docs</option>
               <option value="notebook">Jupyter Notebook</option>
@@ -156,7 +156,7 @@ export default function AdminPage() {
             <select
               value={progressStatus}
               onChange={(e) => setProgressStatus(e.target.value)}
-              className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+              className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
             >
               <option value="not-started">Not started</option>
               <option value="in-progress">In progress</option>
@@ -168,7 +168,7 @@ export default function AdminPage() {
             <select
               value={visibility}
               onChange={(e) => setVisibility(e.target.value)}
-              className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+              className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
             >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
@@ -184,7 +184,7 @@ export default function AdminPage() {
             onChange={(e) => setSummary(e.target.value)}
             rows={2}
             maxLength={500}
-            className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+            className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
           />
         </div>
 
@@ -195,7 +195,7 @@ export default function AdminPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+            className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
           />
         </div>
 
@@ -207,7 +207,7 @@ export default function AdminPage() {
             value={skills}
             onChange={(e) => setSkills(e.target.value)}
             placeholder="MySQL, ERD, Python"
-            className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+            className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
           />
         </div>
 
@@ -220,7 +220,7 @@ export default function AdminPage() {
               value={detailsMarkdown}
               onChange={(e) => setDetailsMarkdown(e.target.value)}
               rows={10}
-              className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 font-mono text-sm text-foreground"
+              className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 font-mono text-sm text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
             />
           </div>
         ) : contentType === "notebook" ? (
@@ -240,7 +240,7 @@ export default function AdminPage() {
                 const dropped = e.dataTransfer.files[0];
                 if (dropped) setFile(dropped);
               }}
-              className={`mt-1 flex flex-col items-center justify-center border-2 border-dashed p-8 text-center text-sm ${
+              className={`mt-1 flex flex-col items-center justify-center border-2 border-dashed bg-card p-8 text-center text-sm ${
                 dragOver ? "border-accent text-accent" : "border-border-soft text-muted"
               }`}
             >
@@ -267,7 +267,7 @@ export default function AdminPage() {
               <select
                 value={codeLanguage}
                 onChange={(e) => setCodeLanguage(e.target.value)}
-                className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-foreground"
+                className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
               >
                 {CODE_LANGUAGES.map((lang) => (
                   <option key={lang} value={lang}>
@@ -282,7 +282,7 @@ export default function AdminPage() {
                 value={codeLanguage}
                 onChange={(e) => setCodeLanguage(e.target.value)}
                 placeholder="Custom language tag"
-                className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 text-sm text-foreground"
+                className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
               />
             </div>
 
@@ -298,7 +298,7 @@ export default function AdminPage() {
                 }}
                 rows={8}
                 placeholder="SELECT * FROM projects;"
-                className="mt-1 w-full border border-border-soft bg-transparent px-3 py-2 font-mono text-sm text-foreground"
+                className="mt-1 w-full border-2 border-border-soft bg-card px-3 py-2 font-mono text-sm text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
               />
             </div>
 
@@ -317,7 +317,7 @@ export default function AdminPage() {
                   setCodeSource("");
                 }
               }}
-              className={`flex flex-col items-center justify-center border-2 border-dashed p-8 text-center text-sm ${
+              className={`flex flex-col items-center justify-center border-2 border-dashed bg-card p-8 text-center text-sm ${
                 dragOver ? "border-accent text-accent" : "border-border-soft text-muted"
               }`}
             >
@@ -352,13 +352,13 @@ export default function AdminPage() {
                 value={link.label}
                 onChange={(e) => updateLink(i, "label", e.target.value)}
                 placeholder="GitHub"
-                className="w-1/3 border border-border-soft bg-transparent px-3 py-2 text-foreground"
+                className="w-1/3 border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
               />
               <input
                 value={link.url}
                 onChange={(e) => updateLink(i, "url", e.target.value)}
                 placeholder="https://github.com/you/repo"
-                className="flex-1 border border-border-soft bg-transparent px-3 py-2 text-foreground"
+                className="flex-1 border-2 border-border-soft bg-card px-3 py-2 text-foreground focus:outline-none focus:shadow-[3px_3px_0_#000]"
               />
             </div>
           ))}
@@ -374,13 +374,13 @@ export default function AdminPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full border-2 border-accent bg-accent px-4 py-3 font-bold text-background disabled:opacity-50"
+          className="card-brutal-sm w-full bg-accent-lime px-4 py-3 font-bold text-foreground uppercase tracking-wide transition-transform hover:-translate-y-0.5 disabled:opacity-50"
         >
           {submitting ? "Saving…" : "Create Project"}
         </button>
 
         {result && (
-          <p className={result.ok ? "text-sm text-accent" : "text-sm text-red-400"}>
+          <p className={result.ok ? "text-sm font-bold text-accent-teal" : "text-sm font-bold text-accent-danger"}>
             {result.message}
             {result.ok && (
               <>

@@ -2,14 +2,20 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #231f1a;
-  --foreground: #f0ead9;
-  --foreground-bright: #f9f5ea;
-  --muted: #c9c0aa;
-  --accent: #e2793d;
-  --border: #f0ead9;
-  --border-soft: #4a443a;
-  --card: #2a251f;
+  --background: #f7f1e3;
+  --foreground: #171310;
+  --foreground-bright: #000000;
+  --muted: #56504a;
+  --accent: #2f5fe0;
+  --border: #000000;
+  --border-soft: #000000;
+  --card: #ffffff;
+
+  --accent-warm: #f5a623;
+  --accent-danger: #e0615a;
+  --accent-teal: #2fb6a8;
+  --accent-lime: #c7de2c;
+  --accent-violet: #7c3aed;
 }
 
 @theme inline {
@@ -21,6 +27,11 @@
   --color-border: var(--border);
   --color-border-soft: var(--border-soft);
   --color-card: var(--card);
+  --color-accent-warm: var(--accent-warm);
+  --color-accent-danger: var(--accent-danger);
+  --color-accent-teal: var(--accent-teal);
+  --color-accent-lime: var(--accent-lime);
+  --color-accent-violet: var(--accent-violet);
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
 }
@@ -28,5 +39,30 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), "Courier New", monospace;
+}
+
+@layer components {
+  /* Thick border + hard offset shadow, no blur -- the core brutalist card. */
+  .card-brutal {
+    border: 3px solid var(--border);
+    box-shadow: 6px 6px 0 var(--border);
+  }
+
+  .card-brutal-sm {
+    border: 2px solid var(--border);
+    box-shadow: 4px 4px 0 var(--border);
+  }
+
+  /* Small bordered label/chip used for badges, skills, and kickers. */
+  .chip-brutal {
+    display: inline-block;
+    border: 2px solid var(--border);
+    background: var(--card);
+    padding: 0.25rem 0.65rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
 }

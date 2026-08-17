@@ -29,7 +29,7 @@ export default async function ProjectDetailPage(
       <div className="mt-8">
         <TrackBadge track={project.track} />
       </div>
-      <h1 className="mt-3 font-serif text-4xl font-black tracking-tight text-foreground-bright sm:text-5xl">
+      <h1 className="mt-3 font-serif text-4xl text-foreground-bright sm:text-5xl">
         {project.title}
       </h1>
 
@@ -62,14 +62,14 @@ export default async function ProjectDetailPage(
       )}
 
       {project.details ? (
-        <div className="prose prose-invert prose-headings:font-serif prose-headings:font-bold prose-a:text-accent prose-strong:text-foreground-bright prose-code:text-accent mt-14 max-w-none">
+        <div className="card-brutal prose prose-headings:font-serif prose-a:text-accent prose-strong:text-foreground-bright prose-code:before:content-none prose-code:after:content-none prose-pre:card-brutal-sm prose-pre:bg-foreground-bright prose-code:rounded-none prose-img:card-brutal-sm mt-14 max-w-none bg-card p-8">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {project.details}
           </ReactMarkdown>
         </div>
       ) : (
-        <div className="mt-14 border-2 border-dashed border-border-soft p-6 text-sm text-muted">
-          <p className="font-serif text-base font-bold text-foreground">
+        <div className="card-brutal-sm mt-14 bg-card p-6 text-sm text-muted">
+          <p className="font-serif text-base text-foreground">
             Coming soon
           </p>
           <p className="mt-1">
