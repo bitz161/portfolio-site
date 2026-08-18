@@ -126,6 +126,11 @@ Notes:
 
 ## 5. Editing or unpublishing later
 
+Editing a post and flipping its status (draft/published) are both covered
+by `/admin/blog/[slug]` now — the SQL below is the manual fallback, and
+still the only way to **delete** a post entirely (`portfolio_admin` has no
+`DELETE` grant).
+
 ```sql
 -- edit
 UPDATE portfolio.blog_posts SET title = 'New Title' WHERE slug = 'my-post-slug';

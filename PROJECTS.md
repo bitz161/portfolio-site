@@ -1,9 +1,15 @@
 # Adding / Editing Projects
 
-Same philosophy as [`BLOG.md`](./BLOG.md): no admin UI, no code changes, no
-redeploy. Projects live in MySQL and the site reads them live on every
-request — insert a row, it shows up; flip `visibility` to `draft`, it
-disappears.
+There's an in-app control panel at `/admin/projects` (Tailscale-gated):
+`/admin/new` creates a project (Docs, Jupyter Notebook, or a code snippet),
+and `/admin/projects/[slug]` edits an existing one's title, track, progress,
+visibility, summary, description, skills, and the full Markdown writeup —
+no SQL needed for any of that. This doc covers the manual-SQL flow those
+routes are built on top of, still needed for **deleting a project entirely**
+and for **removing or reordering an existing external link** (the admin
+panel can only add new links — see §4 below for both). Same philosophy as
+[`BLOG.md`](./BLOG.md): projects live in MySQL and the site reads them
+live on every request either way — no redeploy needed.
 
 All commands below run on **swe-2** (`ssh swe@100.124.72.42`), since that's
 where the `mysql` container lives.
@@ -113,6 +119,11 @@ Notes (same gotchas as the blog):
 ---
 
 ## 4. Editing, hiding, or reordering later
+
+Edit, visibility, and sort order are all covered by `/admin/projects/[slug]`
+now — the SQL below is the manual fallback (and still the only way to
+**delete** a project or **remove/reorder** an existing link, since
+`portfolio_admin` has no `DELETE` grant on either table).
 
 ```sql
 -- edit
