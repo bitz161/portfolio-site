@@ -44,16 +44,19 @@ body {
 }
 
 /* Fixed viewport-relative pixel-dither texture, independent of page
-   height so it never stretches on short/tall pages. Sits behind every
-   page's content via z-index rather than in the normal document flow. */
+   height so it never stretches on short/tall pages. Confined to the
+   top-right quarter of the viewport rather than the whole page; sits
+   behind every page's content via z-index rather than in the normal
+   document flow. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   background-image: url("/bg-dither.svg");
-  background-size: cover;
-  background-position: center;
+  background-size: 50% 50%;
+  background-position: top right;
+  background-repeat: no-repeat;
 }
 
 @layer components {
