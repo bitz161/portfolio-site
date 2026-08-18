@@ -23,7 +23,9 @@ export default async function BlogPage() {
           Nothing published yet — check back soon.
         </p>
       ) : (
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div
+          className={`mt-14 grid grid-cols-1 gap-6 ${posts.length > 1 ? "sm:grid-cols-2" : "max-w-xl"}`}
+        >
           {posts.map((post, i) => (
             <Link
               key={post.id}
