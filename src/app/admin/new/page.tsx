@@ -1,18 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { slugify } from "@/lib/slug";
 
 type ContentType = "docs" | "notebook" | "code";
 
 const CODE_LANGUAGES = ["sql", "python", "bash", "javascript", "typescript", "r"];
-
-function slugify(title: string): string {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 export default function AdminPage() {
   const [title, setTitle] = useState("");

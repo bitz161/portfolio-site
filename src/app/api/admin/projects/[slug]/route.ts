@@ -1,28 +1,7 @@
 import { NextResponse } from "next/server";
 import type { RowDataPacket } from "mysql2";
 import { getAdminPool } from "@/lib/db";
-
-// Same defense-in-depth checks as the create route: middleware.ts already
-// gates /api/admin/*, this re-checks directly, and Origin is checked
-// because Tailscale-User-Login reflects network identity, not app session
-// state.
-function requireTailscaleIdentity(request: Request) {
-  const isDev = process.env.NODE_ENV === "development";
-  if (!isDev && !request.headers.has("Tailscale-User-Login")) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-  return null;
-}
-
-function requireSameOrigin(request: Request) {
-  const origin = request.headers.get("origin");
-  if (!origin) return null;
-  const host = request.headers.get("host");
-  if (!host || new URL(origin).host !== host) {
-    return NextResponse.json({ error: "Cross-origin requests are not allowed." }, { status: 403 });
-  }
-  return null;
-}
+import { requireTailscaleIdentity, requireSameOrigin } from "@/lib/admin-auth";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const forbidden = requireTailscaleIdentity(request) ?? requireSameOrigin(request);

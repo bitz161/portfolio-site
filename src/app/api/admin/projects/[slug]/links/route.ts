@@ -1,24 +1,7 @@
 import { NextResponse } from "next/server";
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { getAdminPool } from "@/lib/db";
-
-function requireTailscaleIdentity(request: Request) {
-  const isDev = process.env.NODE_ENV === "development";
-  if (!isDev && !request.headers.has("Tailscale-User-Login")) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-  return null;
-}
-
-function requireSameOrigin(request: Request) {
-  const origin = request.headers.get("origin");
-  if (!origin) return null;
-  const host = request.headers.get("host");
-  if (!host || new URL(origin).host !== host) {
-    return NextResponse.json({ error: "Cross-origin requests are not allowed." }, { status: 403 });
-  }
-  return null;
-}
+import { requireTailscaleIdentity, requireSameOrigin } from "@/lib/admin-auth";
 
 // Add-only: portfolio_admin has no DELETE grant, so removing/reordering
 // existing links still goes through the manual SQL flow in PROJECTS.md.

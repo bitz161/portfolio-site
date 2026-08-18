@@ -4,6 +4,7 @@ import { getAdminPool } from "@/lib/db";
 import { getAdminMinioClient, PROJECT_FILES_BUCKET } from "@/lib/minio";
 import { notebookToMarkdown } from "@/lib/notebook";
 import { codeToMarkdown } from "@/lib/code-file";
+import { requireTailscaleIdentity, requireSameOrigin } from "@/lib/admin-auth";
 
 type ContentType = "docs" | "notebook" | "code";
 
@@ -12,31 +13,6 @@ const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 function isContentType(value: FormDataEntryValue | null): value is ContentType {
   return value === "docs" || value === "notebook" || value === "code";
-}
-
-// Defense-in-depth: middleware.ts already gates /api/admin/* on the
-// Tailscale-User-Login header, but this route re-checks it directly in case
-// it's ever reached some other way.
-function requireTailscaleIdentity(request: Request) {
-  const isDev = process.env.NODE_ENV === "development";
-  if (!isDev && !request.headers.has("Tailscale-User-Login")) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-  return null;
-}
-
-// Lightweight CSRF defense: Tailscale-User-Login reflects network identity,
-// not app-level session state, so a page loaded from anywhere else in the
-// tailnet could otherwise POST here cross-origin and still carry that
-// header. Reject any request whose Origin doesn't match this host.
-function requireSameOrigin(request: Request) {
-  const origin = request.headers.get("origin");
-  if (!origin) return null; // non-browser clients (curl, server-to-server) have no Origin
-  const host = request.headers.get("host");
-  if (!host || new URL(origin).host !== host) {
-    return NextResponse.json({ error: "Cross-origin requests are not allowed." }, { status: 403 });
-  }
-  return null;
 }
 
 async function readLimitedFile(file: File): Promise<Buffer> {

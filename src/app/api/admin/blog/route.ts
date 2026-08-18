@@ -2,31 +2,10 @@ import { NextResponse } from "next/server";
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { getAdminPool } from "@/lib/db";
 import { getAdminMinioClient, BLOG_BUCKET } from "@/lib/minio";
+import { requireTailscaleIdentity, requireSameOrigin } from "@/lib/admin-auth";
 
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // same cap as the project admin uploads
 const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-
-// Same defense-in-depth checks as the project admin routes: middleware.ts
-// already gates /api/admin/*, this re-checks directly, and Origin is
-// checked because Tailscale-User-Login reflects network identity, not app
-// session state.
-function requireTailscaleIdentity(request: Request) {
-  const isDev = process.env.NODE_ENV === "development";
-  if (!isDev && !request.headers.has("Tailscale-User-Login")) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-  return null;
-}
-
-function requireSameOrigin(request: Request) {
-  const origin = request.headers.get("origin");
-  if (!origin) return null;
-  const host = request.headers.get("host");
-  if (!host || new URL(origin).host !== host) {
-    return NextResponse.json({ error: "Cross-origin requests are not allowed." }, { status: 403 });
-  }
-  return null;
-}
 
 export async function POST(request: Request) {
   const forbidden = requireTailscaleIdentity(request) ?? requireSameOrigin(request);
@@ -83,7 +62,11 @@ export async function POST(request: Request) {
       );
     }
     const buffer = Buffer.from(await coverFile.arrayBuffer());
-    const key = `covers/${slug}/${coverFile.name || "cover"}`;
+    // Timestamp-prefixed so a later re-upload (via PATCH) gets a fresh key
+    // instead of overwriting this one in place -- the image route serves
+    // /api/images/* with a 1-year immutable Cache-Control, so an in-place
+    // overwrite would leave browsers/proxies stuck on the old bytes.
+    const key = `covers/${slug}/${Date.now()}-${coverFile.name || "cover"}`;
     await getAdminMinioClient().putObject(BLOG_BUCKET, key, buffer, buffer.length, {
       "Content-Type": coverFile.type || "application/octet-stream",
     });

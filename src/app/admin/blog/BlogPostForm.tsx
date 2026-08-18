@@ -2,19 +2,12 @@
 
 import { useState } from "react";
 import type { AdminBlogPost } from "@/lib/admin-blog";
+import { slugify } from "@/lib/slug";
 
 type Props = {
   mode: "create" | "edit";
   initial?: AdminBlogPost;
 };
-
-function slugify(title: string): string {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 function toLocalDatetimeInput(date: Date | null): string {
   if (!date) return "";
