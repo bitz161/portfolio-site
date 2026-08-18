@@ -1,8 +1,14 @@
 # Adding Blog Posts
 
-The blog has no admin UI — you write posts by hand: images go into MinIO,
-post content goes into MySQL. The site (`/blog`, `/blog/[slug]`) reads both
-live, on every request, so changes show up immediately with no redeploy.
+There's now an in-app control panel at `/admin/blog` (Tailscale-gated, same
+as `/admin/projects`): write the title, excerpt, and Markdown content,
+optionally drag-and-drop a cover image, and set status/published date —
+no SQL needed for the common case. This doc covers the manual-SQL flow it's
+built on top of, still useful for bulk edits, unpublishing/deleting, or
+inline images referenced from within a post's Markdown body (the panel only
+uploads a single cover image per post; extra images still go through step 2
+below). The site (`/blog`, `/blog/[slug]`) reads both live, on every
+request, so changes show up immediately with no redeploy either way.
 
 All commands below run on **swe-2** (`ssh swe@100.124.72.42`), since that's
 where the `mysql` and `minio` containers live.

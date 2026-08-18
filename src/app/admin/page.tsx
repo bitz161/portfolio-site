@@ -25,6 +25,15 @@ export default function AdminHomePage() {
             Create a new project from Docs, a Jupyter Notebook, or a code snippet.
           </p>
         </Link>
+        <Link
+          href="/admin/blog"
+          className="card-brutal-sm block bg-card px-5 py-4 transition-transform hover:-translate-y-0.5"
+        >
+          <p className="font-bold text-foreground-bright">Manage Blog</p>
+          <p className="mt-1 text-sm text-muted">
+            Write, edit, and publish blog posts without hand-writing SQL.
+          </p>
+        </Link>
       </div>
     </div>
   );
