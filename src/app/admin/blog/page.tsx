@@ -7,7 +7,7 @@ export default async function AdminBlogPage() {
   const posts = await listAdminPosts();
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-16">
+    <div className="mx-auto max-w-5xl px-6 py-16">
       <div className="flex items-center justify-between">
         <h1 className="font-serif text-4xl text-foreground-bright">Manage Blog</h1>
         <Link href="/admin/blog/new" className="text-sm font-semibold text-accent hover:underline">

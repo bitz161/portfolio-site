@@ -90,7 +90,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16">
+    <div className="mx-auto max-w-3xl px-6 py-16">
       <h1 className="font-serif text-4xl text-foreground-bright">
         Add Project
       </h1>

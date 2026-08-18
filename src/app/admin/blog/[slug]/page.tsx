@@ -10,7 +10,7 @@ export default async function EditBlogPostPage({ params }: { params: Promise<{ s
   if (!post) notFound();
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16">
+    <div className="mx-auto max-w-3xl px-6 py-16">
       <h1 className="font-serif text-4xl text-foreground-bright">Edit Post</h1>
       <BlogPostForm mode="edit" initial={post} />
     </div>

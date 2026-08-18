@@ -10,7 +10,7 @@ export default async function EditProjectPage({ params }: { params: Promise<{ sl
   if (!project) notFound();
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16">
+    <div className="mx-auto max-w-3xl px-6 py-16">
       <h1 className="font-serif text-4xl text-foreground-bright">Edit Project</h1>
       <p className="mt-3 text-sm text-muted">
         {project.contentType === "docs"
