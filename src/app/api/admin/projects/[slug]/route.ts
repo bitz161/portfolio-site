@@ -19,6 +19,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ sl
   const skills = Array.isArray(body.skills) ? body.skills.map((s: unknown) => String(s).trim()).filter(Boolean) : [];
   const details = typeof body.details === "string" ? body.details : null;
   const sortOrder = Number.isFinite(body.sort_order) ? Number(body.sort_order) : 0;
+  const metricBefore = typeof body.metric_before === "string" ? body.metric_before.trim() || null : null;
+  const metricAfter = typeof body.metric_after === "string" ? body.metric_after.trim() || null : null;
+  const metricLabel = typeof body.metric_label === "string" ? body.metric_label.trim() || null : null;
 
   if (!title || !track || !summary || !description) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
@@ -40,9 +43,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ sl
     await pool.query(
       `UPDATE projects
        SET title = ?, track = ?, progress_status = ?, visibility = ?, summary = ?,
-           description = ?, skills = ?, details_markdown = ?, sort_order = ?
+           description = ?, skills = ?, details_markdown = ?, sort_order = ?,
+           metric_before = ?, metric_after = ?, metric_label = ?
        WHERE slug = ?`,
-      [title, track, progressStatus, visibility, summary, description, JSON.stringify(skills), details, sortOrder, slug],
+      [
+        title, track, progressStatus, visibility, summary, description,
+        JSON.stringify(skills), details, sortOrder,
+        metricBefore, metricAfter, metricLabel, slug,
+      ],
     );
     return NextResponse.json({ ok: true });
   } catch (err) {

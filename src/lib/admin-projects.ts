@@ -22,6 +22,10 @@ export type AdminProject = AdminProjectSummary & {
   skills: string[];
   details: string | null;
   links: ProjectLink[];
+  imageKey: string | null;
+  metricBefore: string | null;
+  metricAfter: string | null;
+  metricLabel: string | null;
 };
 
 type SummaryRow = RowDataPacket & {
@@ -41,6 +45,10 @@ type DetailRow = SummaryRow & {
   description: string;
   skills: string[];
   details_markdown: string | null;
+  image_key: string | null;
+  metric_before: string | null;
+  metric_after: string | null;
+  metric_label: string | null;
 };
 
 type LinkRow = RowDataPacket & {
@@ -71,7 +79,8 @@ export async function listAdminProjects(): Promise<AdminProjectSummary[]> {
 export async function getAdminProject(slug: string): Promise<AdminProject | null> {
   const [rows] = await getAdminPool().query<DetailRow[]>(
     `SELECT id, slug, title, track, progress_status, content_type, code_language,
-            visibility, summary, description, skills, details_markdown, sort_order
+            visibility, summary, description, skills, details_markdown, sort_order,
+            image_key, metric_before, metric_after, metric_label
      FROM projects
      WHERE slug = ?
      LIMIT 1`,
@@ -100,5 +109,9 @@ export async function getAdminProject(slug: string): Promise<AdminProject | null
     details: row.details_markdown,
     sortOrder: row.sort_order,
     links: linkRows.map((l) => ({ label: l.label, url: l.url })),
+    imageKey: row.image_key,
+    metricBefore: row.metric_before,
+    metricAfter: row.metric_after,
+    metricLabel: row.metric_label,
   };
 }

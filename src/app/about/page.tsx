@@ -17,7 +17,38 @@ export default function AboutPage() {
         write against the same home-lab stack listed below.
       </p>
 
-      <div className="card-brutal mt-12 bg-card p-6">
+      <div className="mt-10 flex flex-wrap gap-4">
+        <a href="mailto:josuegarciaii@yahoo.com" className="btn-pill">
+          Email me
+          <span className="btn-pill-icon" aria-hidden>
+            &rarr;
+          </span>
+        </a>
+        <a
+          href="https://www.linkedin.com/in/josue-garcia-47597b180"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-pill-ghost"
+        >
+          LinkedIn
+          <span className="btn-pill-icon" aria-hidden>
+            &rarr;
+          </span>
+        </a>
+        <a
+          href="https://github.com/bitz161/portfolio-site"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-pill-ghost"
+        >
+          GitHub
+          <span className="btn-pill-icon" aria-hidden>
+            &rarr;
+          </span>
+        </a>
+      </div>
+
+      <div className="card-brutal mt-10 bg-card p-6">
         <p className="text-xs font-bold tracking-wide text-foreground uppercase">
           Home lab stack
         </p>

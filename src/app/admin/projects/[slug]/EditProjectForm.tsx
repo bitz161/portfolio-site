@@ -13,6 +13,11 @@ export default function EditProjectForm({ project }: { project: AdminProject }) 
   const [skills, setSkills] = useState(project.skills.join(", "));
   const [details, setDetails] = useState(project.details ?? "");
   const [sortOrder, setSortOrder] = useState(project.sortOrder);
+  const [metricBefore, setMetricBefore] = useState(project.metricBefore ?? "");
+  const [metricAfter, setMetricAfter] = useState(project.metricAfter ?? "");
+  const [metricLabel, setMetricLabel] = useState(project.metricLabel ?? "");
+  const [imageKey, setImageKey] = useState(project.imageKey);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [links, setLinks] = useState(project.links);
   const [newLinkLabel, setNewLinkLabel] = useState("");
   const [newLinkUrl, setNewLinkUrl] = useState("");
@@ -38,6 +43,9 @@ export default function EditProjectForm({ project }: { project: AdminProject }) 
           skills: skills.split(",").map((s) => s.trim()).filter(Boolean),
           details,
           sort_order: sortOrder,
+          metric_before: metricBefore,
+          metric_after: metricAfter,
+          metric_label: metricLabel,
         }),
       });
       const data = await res.json();
@@ -69,6 +77,29 @@ export default function EditProjectForm({ project }: { project: AdminProject }) 
       setResult({ ok: false, message: err instanceof Error ? err.message : "Unknown error" });
     } finally {
       setSavingLink(false);
+    }
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    setResult(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`/api/admin/projects/${project.slug}/image`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to upload image.");
+      setImageKey(data.key);
+    } catch (err) {
+      setResult({ ok: false, message: err instanceof Error ? err.message : "Unknown error" });
+    } finally {
+      setUploadingImage(false);
+      e.target.value = "";
     }
   }
 
@@ -151,6 +182,58 @@ export default function EditProjectForm({ project }: { project: AdminProject }) 
         <div>
           <label className="block text-sm font-semibold text-foreground-bright">Skills (comma-separated)</label>
           <input value={skills} onChange={(e) => setSkills(e.target.value)} className={inputClass} />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-foreground-bright">
+            Screenshot / diagram (optional)
+          </label>
+          {imageKey && (
+            <p className="mt-1 text-xs text-muted">
+              Current: {imageKey}{" "}
+              <a href={`/api/files/${imageKey}`} target="_blank" rel="noopener noreferrer" className="text-accent underline">
+                view
+              </a>
+            </p>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            disabled={uploadingImage}
+            className="mt-2 text-sm"
+          />
+          {uploadingImage && <p className="mt-1 text-xs text-muted">Uploading…</p>}
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-foreground-bright">Metric before</label>
+            <input
+              value={metricBefore}
+              onChange={(e) => setMetricBefore(e.target.value)}
+              placeholder="26.8ms"
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-foreground-bright">Metric after</label>
+            <input
+              value={metricAfter}
+              onChange={(e) => setMetricAfter(e.target.value)}
+              placeholder="1.6ms"
+              className={inputClass}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-foreground-bright">Metric label</label>
+            <input
+              value={metricLabel}
+              onChange={(e) => setMetricLabel(e.target.value)}
+              placeholder="Query time after index"
+              className={inputClass}
+            />
+          </div>
         </div>
 
         <div>

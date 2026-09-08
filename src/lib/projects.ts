@@ -22,6 +22,12 @@ export type Project = {
   /** Markdown, rendered on the project detail page — ERD, schema notes, sample query/result. */
   details: string | null;
   links: ProjectLink[];
+  /** MinIO object key in PROJECT_FILES_BUCKET, served via /api/files/[key]. */
+  imageKey: string | null;
+  metricBefore: string | null;
+  metricAfter: string | null;
+  metricLabel: string | null;
+  updatedAt: Date;
 };
 
 type ProjectRow = RowDataPacket & {
@@ -37,6 +43,11 @@ type ProjectRow = RowDataPacket & {
   // mysql2 auto-deserializes MySQL JSON columns into native JS values.
   skills: string[];
   details_markdown: string | null;
+  image_key: string | null;
+  metric_before: string | null;
+  metric_after: string | null;
+  metric_label: string | null;
+  updated_at: Date;
 };
 
 type ProjectLinkRow = RowDataPacket & {
@@ -58,6 +69,11 @@ function toProject(row: ProjectRow, links: ProjectLink[]): Project {
     skills: row.skills,
     details: row.details_markdown,
     links,
+    imageKey: row.image_key,
+    metricBefore: row.metric_before,
+    metricAfter: row.metric_after,
+    metricLabel: row.metric_label,
+    updatedAt: row.updated_at,
   };
 }
 
@@ -80,7 +96,7 @@ async function getLinksByProjectId(projectIds: number[]): Promise<Map<number, Pr
 
 export async function getProjects(): Promise<Project[]> {
   const [rows] = await getPool().query<ProjectRow[]>(
-    `SELECT id, slug, title, track, progress_status, content_type, code_language, summary, description, skills, details_markdown
+    `SELECT id, slug, title, track, progress_status, content_type, code_language, summary, description, skills, details_markdown, image_key, metric_before, metric_after, metric_label, updated_at
      FROM projects
      WHERE visibility = 'published'
      ORDER BY sort_order`,
@@ -91,7 +107,7 @@ export async function getProjects(): Promise<Project[]> {
 
 export async function getProject(slug: string): Promise<Project | null> {
   const [rows] = await getPool().query<ProjectRow[]>(
-    `SELECT id, slug, title, track, progress_status, content_type, code_language, summary, description, skills, details_markdown
+    `SELECT id, slug, title, track, progress_status, content_type, code_language, summary, description, skills, details_markdown, image_key, metric_before, metric_after, metric_label, updated_at
      FROM projects
      WHERE slug = ? AND visibility = 'published'
      LIMIT 1`,

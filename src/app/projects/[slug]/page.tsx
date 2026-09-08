@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
@@ -5,6 +6,10 @@ import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { getProject } from "@/lib/projects";
 import { TrackBadge, StatusBadge, TypeBadge, SkillTag } from "@/components/Badge";
+
+function formatUpdated(date: Date) {
+  return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+}
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +42,42 @@ export default async function ProjectDetailPage(
       <p className="mt-7 text-lg leading-8 text-muted">
         {project.description}
       </p>
+
+      <p className="mt-3 font-mono text-xs tracking-widest text-muted uppercase">
+        Last updated {formatUpdated(project.updatedAt)}
+      </p>
+
+      {project.metricBefore && project.metricAfter && (
+        <div className="card-brutal mt-8 flex flex-wrap items-center gap-8 bg-card p-6">
+          <div>
+            <div className="font-mono text-xs tracking-widest text-muted uppercase">Before</div>
+            <div className="mt-1 font-serif text-3xl font-bold text-foreground-bright">
+              {project.metricBefore}
+            </div>
+          </div>
+          <div className="font-serif text-2xl text-accent">&rarr;</div>
+          <div>
+            <div className="font-mono text-xs tracking-widest text-muted uppercase">After</div>
+            <div className="mt-1 font-serif text-3xl font-bold text-accent">
+              {project.metricAfter}
+            </div>
+          </div>
+          {project.metricLabel && (
+            <div className="text-sm text-muted">{project.metricLabel}</div>
+          )}
+        </div>
+      )}
+
+      {project.imageKey && (
+        <div className="card-brutal-sm relative mt-8 aspect-video overflow-hidden">
+          <Image
+            src={`/api/files/${project.imageKey}`}
+            alt={`${project.title} screenshot`}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
 
       <div className="mt-8 flex flex-wrap items-center gap-3">
         <StatusBadge status={project.status} />
