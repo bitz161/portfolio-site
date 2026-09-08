@@ -10,15 +10,15 @@ const links = [
 export default function NavBar({ isAdmin = false }: { isAdmin?: boolean }) {
   const navLinks = isAdmin ? [...links, { href: "/admin", label: "Admin" }] : links;
   return (
-    <header className="border-b-[3px] border-border bg-background">
-      <nav className="mx-auto flex max-w-4xl items-center justify-between px-6 py-6">
+    <header className="bg-background">
+      <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-7">
         <Link
           href="/"
-          className="font-serif text-lg tracking-tight text-foreground-bright"
+          className="font-serif text-lg font-bold tracking-tight text-foreground-bright"
         >
-          Bitz Garcia
+          Josue Garcia
         </Link>
-        <ul className="flex gap-6 text-xs font-bold tracking-wide text-foreground uppercase sm:gap-8">
+        <ul className="flex gap-6 font-mono text-[11px] font-bold tracking-[0.14em] text-foreground-bright uppercase sm:gap-9">
           {navLinks.map((link) => (
             <li key={link.href}>
               <Link

@@ -18,18 +18,18 @@ export default function NotFound() {
         <p className="mt-2 text-muted">Empty set (0.00 sec)</p>
       </div>
 
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Link
-          href="/"
-          className="card-brutal-sm bg-card px-4 py-2 font-bold uppercase tracking-wide transition-transform hover:-translate-y-0.5"
-        >
+      <div className="mt-8 flex flex-wrap gap-4">
+        <Link href="/" className="btn-pill">
           Home
+          <span className="btn-pill-icon" aria-hidden>
+            &rarr;
+          </span>
         </Link>
-        <Link
-          href="/projects"
-          className="card-brutal-sm bg-accent-lime px-4 py-2 font-bold uppercase tracking-wide transition-transform hover:-translate-y-0.5"
-        >
+        <Link href="/projects" className="btn-pill-ghost">
           Projects
+          <span className="btn-pill-icon" aria-hidden>
+            &rarr;
+          </span>
         </Link>
       </div>
     </div>

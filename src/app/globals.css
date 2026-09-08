@@ -2,20 +2,21 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #f7f1e3;
-  --foreground: #171310;
-  --foreground-bright: #000000;
-  --muted: #56504a;
-  --accent: #2f5fe0;
-  --border: #000000;
-  --border-soft: #000000;
+  /* Warm cream studio palette: bold black type, one rust accent, white cards. */
+  --background: #f4efe4;
+  --foreground: #3c3527;
+  --foreground-bright: #14110a;
+  --muted: #857a67;
+  --accent: #c1502e;
+  --border: #ddd3bd;
+  --border-soft: #e9e1cd;
   --card: #ffffff;
 
-  --accent-warm: #f5a623;
-  --accent-danger: #e0615a;
-  --accent-teal: #2fb6a8;
-  --accent-lime: #c7de2c;
-  --accent-violet: #7c3aed;
+  --accent-warm: #c1502e;
+  --accent-danger: #ac3d3d;
+  --accent-teal: #2f7d72;
+  --accent-lime: #7a7a2e;
+  --accent-violet: #6a4f8f;
 }
 
 @theme inline {
@@ -34,36 +35,126 @@
   --color-accent-violet: var(--accent-violet);
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), "Courier New", monospace;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer components {
-  /* Thick border + hard offset shadow, no blur -- the core brutalist card. */
+  /* Soft white panel on the cream ground -- rounded corner, quiet shadow, no border noise. */
   .card-brutal {
-    border: 3px solid var(--border);
-    box-shadow: 6px 6px 0 var(--border);
+    position: relative;
+    border-radius: 1.25rem;
+    background: var(--card);
+    box-shadow: 0 1px 2px rgba(20, 17, 10, 0.04), 0 12px 30px -14px rgba(20, 17, 10, 0.18);
   }
 
   .card-brutal-sm {
-    border: 2px solid var(--border);
-    box-shadow: 4px 4px 0 var(--border);
+    border-radius: 0.75rem;
   }
 
-  /* Small bordered label/chip used for badges, skills, and kickers. */
+  /* Small hairline label/chip used for badges and skills. */
   .chip-brutal {
     display: inline-block;
-    border: 2px solid var(--border);
+    border: 1px solid var(--border);
+    border-radius: 999px;
     background: var(--card);
-    padding: 0.25rem 0.65rem;
+    color: var(--muted);
+    padding: 0.3rem 0.75rem;
+    font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.6875rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
+  }
+
+  /* Small italic eyebrow with a leading plus mark, sits above a big statement heading. */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-style: italic;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .kicker::before {
+    content: "+";
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  /* Big italic muted index, sits top-right of a section heading ("03+"). */
+  .section-count {
+    font-style: italic;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .section-count::after {
+    content: "+";
+    color: var(--accent);
+  }
+
+  /* Pill button with a trailing circular icon slot -- the site's one CTA shape. */
+  .btn-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 999px;
+    background: var(--foreground-bright);
+    color: var(--background);
+    padding: 0.7rem 0.6rem 0.7rem 1.3rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: opacity 0.15s ease;
+  }
+  .btn-pill:hover {
+    opacity: 0.85;
+  }
+  .btn-pill .btn-pill-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--background) 40%, transparent);
+    font-size: 0.9rem;
+  }
+
+  /* Ghost variant: same pill shape, outlined, for secondary actions on light ground. */
+  .btn-pill-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--foreground-bright);
+    padding: 0.65rem 0.6rem 0.65rem 1.3rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .btn-pill-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn-pill-ghost .btn-pill-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    font-size: 0.9rem;
   }
 }
 

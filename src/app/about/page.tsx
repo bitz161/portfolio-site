@@ -1,9 +1,9 @@
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16">
-      <span className="chip-brutal bg-accent-lime">About</span>
-      <h1 className="mt-5 font-serif text-4xl text-foreground-bright sm:text-5xl">
-        Bitz Garcia
+    <div className="mx-auto max-w-2xl px-6 py-20">
+      <span className="kicker">About</span>
+      <h1 className="mt-5 font-serif text-4xl font-bold text-foreground-bright sm:text-5xl">
+        Josue Garcia
       </h1>
       <p className="mt-7 text-lg leading-8 text-muted">
         I build and operate data infrastructure end to end — from schema

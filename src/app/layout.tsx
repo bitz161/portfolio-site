@@ -1,24 +1,32 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Archivo_Black, Space_Mono } from "next/font/google";
+import { Archivo, Work_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
-const spaceMono = Space_Mono({
+const workSans = Work_Sans({
   variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+});
+
+const archivo = Archivo({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: "variable",
+  style: ["normal", "italic"],
+});
+
+const spaceMono = Space_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "700"],
 });
 
-const archivoBlack = Archivo_Black({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: "400",
-});
-
 export const metadata: Metadata = {
-  title: "Bitz Garcia — Data & Database Portfolio",
+  title: "Josue Garcia — Data & Database Portfolio",
   description:
     "Data analyst and database engineering portfolio, self-hosted on a home server.",
 };
@@ -35,7 +43,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${spaceMono.variable} ${archivoBlack.variable} h-full antialiased`}
+      className={`${workSans.variable} ${archivo.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <NavBar isAdmin={isAdmin} />
