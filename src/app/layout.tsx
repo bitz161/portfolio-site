@@ -1,22 +1,20 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Archivo, Work_Sans, Space_Mono } from "next/font/google";
+import { Archivo_Black, DM_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
-const workSans = Work_Sans({
+const dmSans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
 });
 
-const archivo = Archivo({
+const archivoBlack = Archivo_Black({
   variable: "--font-serif",
   subsets: ["latin"],
-  weight: "variable",
-  style: ["normal", "italic"],
+  weight: "400",
 });
 
 const spaceMono = Space_Mono({
@@ -43,7 +41,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${workSans.variable} ${archivo.variable} ${spaceMono.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${archivoBlack.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <NavBar isAdmin={isAdmin} />

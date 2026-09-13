@@ -19,27 +19,27 @@ export default async function BlogPostPage(
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
+    <div className="mx-auto max-w-3xl px-6 py-16 sm:px-8">
       <Link
         href="/blog"
-        className="text-sm font-semibold tracking-wide text-muted uppercase transition-colors hover:text-accent"
+        className="border-b border-foreground-bright pb-0.5 font-mono text-xs font-bold tracking-widest text-foreground-bright uppercase transition-colors hover:border-accent hover:text-accent"
       >
         &larr; All posts
       </Link>
 
-      <span className="mt-8 block text-xs font-semibold tracking-wide text-muted uppercase">
+      <span className="folio-label mt-8 block">
         {post.publishedAt?.toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
           day: "numeric",
         })}
       </span>
-      <h1 className="mt-3 font-serif text-4xl text-foreground-bright sm:text-5xl">
+      <h1 className="font-serif text-foreground-bright mt-3 text-4xl leading-tight sm:text-5xl">
         {post.title}
       </h1>
 
       {post.coverImageUrl && (
-        <div className="card-brutal relative mt-9 aspect-video overflow-hidden">
+        <div className="relative mt-9 aspect-video overflow-hidden border-2 border-foreground-bright">
           <Image
             src={post.coverImageUrl}
             alt={post.title}
@@ -49,7 +49,7 @@ export default async function BlogPostPage(
         </div>
       )}
 
-      <div className="card-brutal prose prose-headings:font-serif prose-a:text-accent prose-strong:text-foreground-bright prose-code:before:content-none prose-code:after:content-none prose-pre:card-brutal-sm prose-pre:bg-foreground-bright prose-code:rounded-none prose-img:card-brutal-sm mt-10 max-w-none bg-card p-8">
+      <div className="prose prose-headings:font-serif prose-a:text-accent prose-strong:text-foreground-bright prose-code:before:content-none prose-code:after:content-none prose-pre:border-2 prose-pre:border-foreground-bright prose-pre:bg-foreground-bright prose-code:rounded-none prose-img:border-2 prose-img:border-foreground-bright mt-10 max-w-none">
         <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
           {post.content}
         </ReactMarkdown>

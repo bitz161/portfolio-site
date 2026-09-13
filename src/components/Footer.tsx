@@ -1,28 +1,55 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-card text-muted">
-      <div className="mx-auto flex max-w-5xl flex-col gap-4 px-6 py-8 text-sm sm:flex-row sm:items-center sm:justify-between">
-        <span>Built and self-hosted on a home Ubuntu/Docker server.</span>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] tracking-[0.1em] uppercase">
-          <a href="mailto:josuegarciaii@yahoo.com" className="text-muted/70 transition-colors hover:text-accent">
-            Email
-          </a>
-          <a
-            href="https://www.linkedin.com/in/josue-garcia-47597b180"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted/70 transition-colors hover:text-accent"
-          >
-            LinkedIn
-          </a>
-          <a
-            href="https://github.com/bitz161/portfolio-site"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted/70 transition-colors hover:text-accent"
-          >
-            GitHub
-          </a>
+    <footer className="border-t border-foreground-bright bg-foreground-bright">
+      <div className="mx-auto max-w-7xl px-6 sm:px-8">
+        <div className="flex flex-col gap-4 border-b border-background/10 py-6 sm:flex-row sm:items-center sm:justify-between">
+          <span className="font-mono text-[11px] tracking-[0.14em] text-background/40 uppercase">
+            &copy; 2026 Josue Garcia &middot; Self-hosted on Docker
+          </span>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <a
+              href="https://github.com/bitz161/portfolio-site"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ink-hover font-mono text-[11px] font-bold tracking-[0.14em] text-background/40 uppercase"
+            >
+              GitHub
+            </a>
+            <Link
+              href="/projects"
+              className="ink-hover font-mono text-[11px] font-bold tracking-[0.14em] text-background/40 uppercase"
+            >
+              Projects
+            </Link>
+            <Link
+              href="/blog"
+              className="ink-hover font-mono text-[11px] font-bold tracking-[0.14em] text-background/40 uppercase"
+            >
+              Writing
+            </Link>
+            <Link
+              href="/about"
+              className="ink-hover font-mono text-[11px] font-bold tracking-[0.14em] text-background/40 uppercase"
+            >
+              About
+            </Link>
+            <a
+              href="mailto:josuegarciaii@yahoo.com"
+              className="ink-hover font-mono text-[11px] font-bold tracking-[0.14em] text-background/40 uppercase"
+            >
+              Email
+            </a>
+          </div>
+        </div>
+        <div className="flex items-center justify-between py-3">
+          <span className="font-mono text-[11px] tracking-[0.14em] text-background/20 uppercase">
+            swe-2.tail174d56.ts.net
+          </span>
+          <span className="font-mono text-[11px] tracking-[0.14em] text-background/20 uppercase">
+            Data Engineering Portfolio
+          </span>
         </div>
       </div>
     </footer>

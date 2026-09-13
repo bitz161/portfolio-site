@@ -18,6 +18,7 @@ export default function EditProjectForm({ project }: { project: AdminProject }) 
   const [metricLabel, setMetricLabel] = useState(project.metricLabel ?? "");
   const [imageKey, setImageKey] = useState(project.imageKey);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
   const [links, setLinks] = useState(project.links);
   const [newLinkLabel, setNewLinkLabel] = useState("");
   const [newLinkUrl, setNewLinkUrl] = useState("");
@@ -80,9 +81,7 @@ export default function EditProjectForm({ project }: { project: AdminProject }) 
     }
   }
 
-  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function uploadImage(file: File) {
     setUploadingImage(true);
     setResult(null);
     try {
@@ -99,8 +98,21 @@ export default function EditProjectForm({ project }: { project: AdminProject }) 
       setResult({ ok: false, message: err instanceof Error ? err.message : "Unknown error" });
     } finally {
       setUploadingImage(false);
-      e.target.value = "";
     }
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    await uploadImage(file);
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLLabelElement>) {
+    e.preventDefault();
+    setDragActive(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("image/")) uploadImage(file);
   }
 
   const inputClass =
@@ -188,22 +200,35 @@ export default function EditProjectForm({ project }: { project: AdminProject }) 
           <label className="block text-sm font-semibold text-foreground-bright">
             Screenshot / diagram (optional)
           </label>
-          {imageKey && (
-            <p className="mt-1 text-xs text-muted">
-              Current: {imageKey}{" "}
-              <a href={`/api/files/${imageKey}`} target="_blank" rel="noopener noreferrer" className="text-accent underline">
-                view
-              </a>
-            </p>
-          )}
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            disabled={uploadingImage}
-            className="mt-2 text-sm"
-          />
-          {uploadingImage && <p className="mt-1 text-xs text-muted">Uploading…</p>}
+          <label
+            onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+            onDragLeave={() => setDragActive(false)}
+            onDrop={handleDrop}
+            className={`mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 border-2 border-dashed p-4 text-center transition-colors ${
+              dragActive ? "border-accent bg-accent/5" : "border-foreground-bright/30 hover:border-foreground-bright/60"
+            }`}
+          >
+            {imageKey ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`/api/files/${imageKey}`}
+                alt="Current cover"
+                className="max-h-40 w-auto border border-foreground-bright/20 object-contain"
+              />
+            ) : (
+              <span className="text-xs text-muted">Drag an image here, or click to browse</span>
+            )}
+            <span className="font-mono text-[11px] tracking-widest text-muted uppercase">
+              {uploadingImage ? "Uploading…" : imageKey ? "Replace image" : "Choose file"}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              disabled={uploadingImage}
+              className="hidden"
+            />
+          </label>
         </div>
 
         <div className="grid grid-cols-3 gap-4">

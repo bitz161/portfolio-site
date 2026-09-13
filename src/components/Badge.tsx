@@ -6,6 +6,12 @@ const statusLabel: Record<ProjectStatus, string> = {
   done: "Done",
 };
 
+const statusBadgeClass: Record<ProjectStatus, string> = {
+  "not-started": "badge-not-started",
+  "in-progress": "badge-in-progress",
+  done: "badge-done",
+};
+
 const contentTypeLabel: Record<ProjectContentType, string> = {
   docs: "Docs",
   notebook: "Jupyter Notebook",
@@ -17,7 +23,11 @@ export function TrackBadge({ track }: { track: Project["track"] }) {
 }
 
 export function StatusBadge({ status }: { status: ProjectStatus }) {
-  return <span className="chip-brutal">{statusLabel[status]}</span>;
+  return (
+    <span className={`px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-widest ${statusBadgeClass[status]}`}>
+      {statusLabel[status]}
+    </span>
+  );
 }
 
 export function TypeBadge({

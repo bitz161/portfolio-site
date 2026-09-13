@@ -1,16 +1,24 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Tailwind v4 wraps `hover:` in @media (hover: hover) by default, to avoid
+   sticky hover on touch devices. This environment's (hover: hover) media
+   feature evaluates false even on a real mouse, which silently no-ops every
+   hover: utility site-wide. Redefine the variant unconditionally so hover
+   styles actually apply -- unconditional is fine for links/buttons, which
+   never had a meaningful tap-and-hold "stuck hover" state here anyway. */
+@custom-variant hover (&:hover);
+
 :root {
-  /* Warm cream studio palette: bold black type, one rust accent, white cards. */
-  --background: #f4efe4;
-  --foreground: #3c3527;
-  --foreground-bright: #14110a;
-  --muted: #857a67;
-  --accent: #c1502e;
-  --border: #ddd3bd;
-  --border-soft: #e9e1cd;
-  --card: #ffffff;
+  /* Editorial masthead palette, ported 1:1 from test_portfolio's tailwind.css tokens. */
+  --background: #f8f5ef;
+  --foreground: #111010;
+  --foreground-bright: #111010;
+  --muted: #5a5550;
+  --accent: #c8102e;
+  --border: var(--foreground-bright);
+  --border-soft: #e8e5df;
+  --card: #f8f5ef;
 
   --accent-warm: #c1502e;
   --accent-danger: #ac3d3d;
@@ -45,25 +53,23 @@ body {
 }
 
 @layer components {
-  /* Soft white panel on the cream ground -- rounded corner, quiet shadow, no border noise. */
+  /* White panel on the cream ground -- hard black rule, sharp corners, no shadow. */
   .card-brutal {
     position: relative;
-    border-radius: 1.25rem;
+    border: 1.5px solid var(--foreground-bright);
     background: var(--card);
-    box-shadow: 0 1px 2px rgba(20, 17, 10, 0.04), 0 12px 30px -14px rgba(20, 17, 10, 0.18);
   }
 
   .card-brutal-sm {
-    border-radius: 0.75rem;
+    border: 1.5px solid var(--foreground-bright);
   }
 
-  /* Small hairline label/chip used for badges and skills. */
+  /* Hairline bordered label/chip used for badges and skills -- squared, not a pill. */
   .chip-brutal {
     display: inline-block;
-    border: 1px solid var(--border);
-    border-radius: 999px;
+    border: 1px solid var(--foreground-bright);
     background: var(--card);
-    color: var(--muted);
+    color: var(--foreground);
     padding: 0.3rem 0.75rem;
     font-family: var(--font-mono), ui-monospace, monospace;
     font-size: 0.6875rem;
@@ -72,89 +78,168 @@ body {
     letter-spacing: 0.08em;
   }
 
-  /* Small italic eyebrow with a leading plus mark, sits above a big statement heading. */
+  /* Slash-prefixed mono eyebrow, sits above a section heading ("/ PROJECTS"). */
   .kicker {
     display: inline-flex;
     align-items: center;
-    gap: 0.4em;
-    font-style: italic;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    gap: 0.5em;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--muted);
   }
   .kicker::before {
-    content: "+";
+    content: "/";
     color: var(--accent);
-    font-style: normal;
   }
 
-  /* Big italic muted index, sits top-right of a section heading ("03+"). */
+  /* Muted index, sits top-right of a section heading. */
   .section-count {
-    font-style: italic;
+    font-family: var(--font-mono), ui-monospace, monospace;
     color: var(--muted);
-    font-weight: 500;
-  }
-  .section-count::after {
-    content: "+";
-    color: var(--accent);
+    font-weight: 700;
   }
 
-  /* Pill button with a trailing circular icon slot -- the site's one CTA shape. */
+  /* Squared button, hard border, trailing arrow slot -- the site's one CTA shape. */
   .btn-pill {
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    border-radius: 999px;
+    border: 1.5px solid var(--foreground-bright);
     background: var(--foreground-bright);
     color: var(--background);
-    padding: 0.7rem 0.6rem 0.7rem 1.3rem;
-    font-size: 0.8125rem;
+    padding: 0.7rem 1.3rem;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     transition: opacity 0.15s ease;
   }
   .btn-pill:hover {
     opacity: 0.85;
   }
   .btn-pill .btn-pill-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--background) 40%, transparent);
     font-size: 0.9rem;
   }
 
-  /* Ghost variant: same pill shape, outlined, for secondary actions on light ground. */
+  /* Ghost variant: same shape, outlined, for secondary actions on light ground. */
   .btn-pill-ghost {
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    border-radius: 999px;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--foreground-bright);
     color: var(--foreground-bright);
-    padding: 0.65rem 0.6rem 0.65rem 1.3rem;
-    font-size: 0.8125rem;
+    padding: 0.65rem 1.3rem;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
   }
   .btn-pill-ghost:hover {
     border-color: var(--accent);
     color: var(--accent);
   }
   .btn-pill-ghost .btn-pill-icon {
+    font-size: 0.9rem;
+  }
+
+  /* Red CTA -- reserved for the one external link that matters most per page (GitHub). */
+  .btn-accent {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 1.6rem;
-    height: 1.6rem;
-    border-radius: 999px;
-    border: 1px solid currentColor;
-    font-size: 0.9rem;
+    gap: 0.5em;
+    border: 1.5px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    padding: 0.55rem 1rem;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: opacity 0.15s ease;
+  }
+  .btn-accent:hover {
+    opacity: 0.85;
+  }
+
+  /* Folio label, top-left of the masthead ("PORTFOLIO · 2026"). */
+  .folio-label {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Bordered stat block for a "by the numbers" rail. */
+  .stat-tile {
+    border-top: 1.5px solid var(--foreground-bright);
+    padding-top: 0.85rem;
+  }
+
+  /* Arrow-driven horizontal strips (project selector) scroll natively but
+     hide the scrollbar -- the arrow buttons are the only visible affordance. */
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* nav link hover: text turns accent red */
+  .ink-hover {
+    transition: color 0.15s ease;
+  }
+  .ink-hover:hover {
+    color: var(--accent);
+  }
+
+  /* same, plus border color -- for outline/ghost buttons */
+  .ink-hover-border {
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .ink-hover-border:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* Status badges, ported from test_portfolio */
+  .badge-done {
+    background-color: var(--foreground-bright);
+    color: var(--background);
+  }
+  .badge-in-progress {
+    background-color: var(--accent);
+    color: #fff;
+  }
+  .badge-not-started {
+    background-color: var(--border-soft);
+    color: var(--muted);
+  }
+
+  /* Admin form input, ported from test_portfolio's .input-brutal */
+  .input-brutal {
+    background-color: var(--background);
+    border: 1px solid var(--foreground-bright);
+    color: var(--foreground);
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.875rem;
+    padding: 0.625rem 0.75rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.1s ease;
+  }
+  .input-brutal:focus {
+    border-color: var(--accent);
+    border-width: 2px;
   }
 }
 
