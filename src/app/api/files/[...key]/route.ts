@@ -1,4 +1,3 @@
-import { Readable } from "node:stream";
 import { NextResponse } from "next/server";
 import { getAdminMinioClient, PROJECT_FILES_BUCKET } from "@/lib/minio";
 
@@ -10,20 +9,19 @@ export async function GET(
   ctx: { params: Promise<{ key: string[] }> },
 ) {
   const { key } = await ctx.params;
-  const objectName = key.join("/");
 
-  try {
-    const client = getAdminMinioClient();
-    const stat = await client.statObject(PROJECT_FILES_BUCKET, objectName);
-    const stream = await client.getObject(PROJECT_FILES_BUCKET, objectName);
-
-    return new NextResponse(Readable.toWeb(stream) as ReadableStream, {
-      headers: {
-        "Content-Type": stat.metaData?.["content-type"] ?? "application/octet-stream",
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-    });
-  } catch {
+  const object = await getAdminMinioClient().getObject(PROJECT_FILES_BUCKET, key.join("/")).catch(() => null);
+  if (!object?.ok || !object.body) {
+    // Drain rather than cancel: Next's patched fetch tees response bodies, and
+    // cancelling one tee branch never resolves while the other is unread.
+    await object?.arrayBuffer().catch(() => {});
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+
+  return new NextResponse(object.body, {
+    headers: {
+      "Content-Type": object.headers.get("content-type") ?? "application/octet-stream",
+      "Cache-Control": "public, max-age=31536000, immutable",
+    },
+  });
 }

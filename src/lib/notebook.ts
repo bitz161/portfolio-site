@@ -28,9 +28,7 @@ async function uploadOutputImage(
 ): Promise<string> {
   const key = `projects/${slug}/out-${cellIdx}-${outputIdx}.png`;
   const buffer = Buffer.from(joinSource(base64Png), "base64");
-  await getAdminMinioClient().putObject(PROJECT_FILES_BUCKET, key, buffer, buffer.length, {
-    "Content-Type": "image/png",
-  });
+  await getAdminMinioClient().putObject(PROJECT_FILES_BUCKET, key, buffer, "image/png");
   return `/api/files/${key}`;
 }
 

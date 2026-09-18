@@ -41,9 +41,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
   const buffer = Buffer.from(await file.arrayBuffer());
 
   try {
-    await getAdminMinioClient().putObject(PROJECT_FILES_BUCKET, key, buffer, buffer.length, {
-      "Content-Type": file.type,
-    });
+    await getAdminMinioClient().putObject(PROJECT_FILES_BUCKET, key, buffer, file.type);
     await pool.query<ResultSetHeader>(`UPDATE projects SET image_key = ? WHERE slug = ?`, [key, slug]);
     return NextResponse.json({ ok: true, key });
   } catch (err) {

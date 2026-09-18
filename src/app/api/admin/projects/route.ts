@@ -101,9 +101,7 @@ export async function POST(request: Request) {
       detailsMarkdown = await notebookToMarkdown(notebook, slug);
 
       const key = `projects/${slug}/source.ipynb`;
-      await getAdminMinioClient().putObject(PROJECT_FILES_BUCKET, key, buffer, buffer.length, {
-        "Content-Type": "application/x-ipynb+json",
-      });
+      await getAdminMinioClient().putObject(PROJECT_FILES_BUCKET, key, buffer, "application/x-ipynb+json");
       sourceLink = { label: "Download notebook", url: `/api/files/${key}` };
     } else {
       // "code": SQL, Python, Bash, or anything else -- either an uploaded
@@ -118,9 +116,7 @@ export async function POST(request: Request) {
         detailsMarkdown = codeToMarkdown(buffer.toString("utf-8"), codeLanguage);
 
         const key = `projects/${slug}/${file.name || "source.txt"}`;
-        await getAdminMinioClient().putObject(PROJECT_FILES_BUCKET, key, buffer, buffer.length, {
-          "Content-Type": "text/plain",
-        });
+        await getAdminMinioClient().putObject(PROJECT_FILES_BUCKET, key, buffer, "text/plain");
         sourceLink = { label: "View source", url: `/api/files/${key}` };
       } else if (pastedSource.trim()) {
         detailsMarkdown = codeToMarkdown(pastedSource, codeLanguage);

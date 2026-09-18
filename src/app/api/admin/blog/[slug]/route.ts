@@ -61,9 +61,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ sl
     // a 1-year immutable Cache-Control, so an in-place overwrite would leave
     // browsers/proxies stuck on the old bytes at the same URL.
     const key = `covers/${slug}/${Date.now()}-${coverFile.name || "cover"}`;
-    await getAdminMinioClient().putObject(BLOG_BUCKET, key, buffer, buffer.length, {
-      "Content-Type": coverFile.type || "application/octet-stream",
-    });
+    await getAdminMinioClient().putObject(BLOG_BUCKET, key, buffer, coverFile.type || "application/octet-stream");
     coverImageUrl = `/api/images/${key}`;
   }
 

@@ -67,9 +67,7 @@ export async function POST(request: Request) {
     // /api/images/* with a 1-year immutable Cache-Control, so an in-place
     // overwrite would leave browsers/proxies stuck on the old bytes.
     const key = `covers/${slug}/${Date.now()}-${coverFile.name || "cover"}`;
-    await getAdminMinioClient().putObject(BLOG_BUCKET, key, buffer, buffer.length, {
-      "Content-Type": coverFile.type || "application/octet-stream",
-    });
+    await getAdminMinioClient().putObject(BLOG_BUCKET, key, buffer, coverFile.type || "application/octet-stream");
     coverImageUrl = `/api/images/${key}`;
   }
 
