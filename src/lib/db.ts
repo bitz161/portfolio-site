@@ -2,6 +2,11 @@ import mysql from "mysql2/promise";
 
 let pool: mysql.Pool | undefined;
 
+// BLOG_DB_SSL=1 turns on TLS to the database host. ProxySQL needs it: hash-only users
+// cannot complete a first login without TLS. rejectUnauthorized is false because ProxySQL
+// presents a self-signed certificate, so this encrypts but does not verify the server.
+const ssl = () => (process.env.BLOG_DB_SSL === "1" ? { rejectUnauthorized: false } : undefined);
+
 // portfolio_web only ever has SELECT grants (see schema_admin.sql), so
 // this pool can safely read from the replica when one is configured --
 // there's no write path here to worry about seeing stale data from its
@@ -15,6 +20,7 @@ export function getPool() {
       password: process.env.BLOG_DB_PASSWORD,
       database: process.env.BLOG_DB_NAME,
       connectionLimit: 5,
+      ssl: ssl(),
     });
   }
   return pool;
@@ -32,6 +38,7 @@ export function getAdminPool() {
       password: process.env.ADMIN_DB_PASSWORD,
       database: process.env.BLOG_DB_NAME,
       connectionLimit: 2,
+      ssl: ssl(),
     });
   }
   return adminPool;
