@@ -47,7 +47,7 @@ export default function ProjectGrid({ projects }: { projects: GridProject[] }) {
         ))}
       </div>
 
-      <motion.ul layout className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <motion.ul layout className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:auto-rows-[minmax(17rem,auto)] lg:grid-flow-dense">
         <AnimatePresence mode="popLayout" initial={false}>
           {shown.map((p, i) => (
             <motion.li
@@ -57,8 +57,10 @@ export default function ProjectGrid({ projects }: { projects: GridProject[] }) {
               animate={{ opacity: 1, scale: 1, transition: { duration: 0.55, ease: EMPH, delay: i * 0.03 } }}
               exit={{ opacity: 0, scale: 0.6, transition: { duration: 0.2, ease: [0.3, 0, 1, 1] } }}
               transition={{ layout: { duration: 0.65, ease: EMPH } }}
+              // first visible project is the featured tile: 2x2 on desktop, full summary and stack
+              className={i === 0 ? "sm:col-span-2 lg:row-span-2" : undefined}
             >
-              <ProjectTile p={p} index={projects.indexOf(p)} />
+              <ProjectTile p={p} index={projects.indexOf(p)} featured={i === 0} />
             </motion.li>
           ))}
         </AnimatePresence>
@@ -67,23 +69,23 @@ export default function ProjectGrid({ projects }: { projects: GridProject[] }) {
   );
 }
 
-function ProjectTile({ p, index }: { p: GridProject; index: number }) {
+function ProjectTile({ p, index, featured }: { p: GridProject; index: number; featured: boolean }) {
   return (
     <Link href={`/projects/${p.slug}`} prefetch className="group block h-full">
       <ViewTransition name={`project-${p.slug}`} share="morph" default="none">
         <article
-          className="surface relative flex h-full flex-col overflow-hidden p-6 transition-[border-color,transform] duration-300 ease-std group-hover:-translate-y-1 group-hover:border-white/20"
+          className={`surface relative flex h-full flex-col overflow-hidden ${featured ? "p-8 sm:p-10" : "p-6"} transition-[border-color,transform] duration-300 ease-std group-hover:-translate-y-1 group-hover:border-white/20`}
           style={{ background: `linear-gradient(160deg, color-mix(in srgb, ${p.accent} 18%, transparent), rgb(255 255 255 / 0.02) 60%)` }}
         >
           <div className="flex items-start justify-between">
-            <span className="font-display text-5xl leading-none text-white/15">{String(index + 1).padStart(2, "0")}</span>
+            <span className={`font-display leading-none text-white/15 ${featured ? "text-8xl" : "text-5xl"}`}>{String(index + 1).padStart(2, "0")}</span>
             <StatusBadge status={p.status} />
           </div>
-          <h3 className="mt-10 font-display text-2xl leading-tight">{p.title}</h3>
-          <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">{p.summary}</p>
-          <div className="mt-auto flex items-end justify-between gap-4 pt-6">
+          <h3 className={`font-display leading-tight ${featured ? "mt-auto pt-16 text-[clamp(2rem,3.4vw,3.2rem)]" : "mt-10 text-2xl"}`}>{p.title}</h3>
+          <p className={`mt-3 leading-relaxed text-muted ${featured ? "max-w-2xl text-base" : "line-clamp-4 text-sm"}`}>{p.summary}</p>
+          <div className={`flex items-end justify-between gap-4 pt-6 ${featured ? "mt-8" : "mt-auto"}`}>
             <div className="flex flex-wrap gap-1.5">
-              {p.skills.slice(0, 3).map((s) => (
+              {(featured ? p.skills : p.skills.slice(0, 3)).map((s) => (
                 <span key={s} className="chip">{s}</span>
               ))}
             </div>

@@ -115,10 +115,10 @@ export default async function Home() {
       {posts.length > 0 && (
         <section className="shell py-20">
           <SectionHead index="04" label="Writing" title="Notes from the work." />
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className={`grid gap-4 ${posts.length > 1 ? "md:grid-cols-2" : ""}`}>
             {posts.slice(0, 2).map((post, i) => (
               <Reveal key={post.slug} i={i}>
-                <PostCard post={post} />
+                <PostCard post={post} wide={posts.length === 1} />
               </Reveal>
             ))}
           </div>

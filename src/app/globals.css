@@ -48,7 +48,7 @@ body {
 
 @layer components {
   .shell {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-8;
+    @apply mx-auto w-full max-w-[88rem] px-4 sm:px-8 lg:px-12;
   }
   .label {
     @apply font-mono text-xs tracking-[0.2em] text-steel-soft uppercase;

@@ -15,10 +15,10 @@ export default async function BlogPage() {
       {posts.length === 0 ? (
         <p className="surface p-6 text-muted">Nothing published yet.</p>
       ) : (
-        <div className={`grid gap-4 ${posts.length > 1 ? "md:grid-cols-2" : "max-w-2xl"}`}>
+        <div className={`grid gap-4 ${posts.length > 1 ? "md:grid-cols-2" : ""}`}>
           {posts.map((post, i) => (
             <Reveal key={post.slug} i={i}>
-              <PostCard post={post} />
+              <PostCard post={post} wide={posts.length === 1} />
             </Reveal>
           ))}
         </div>
