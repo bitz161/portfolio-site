@@ -1,14 +1,12 @@
-import BlogPostForm from "../BlogPostForm";
+import Link from "next/link";
+import PostForm from "../PostForm";
 
-export default function NewBlogPostPage() {
+export default function NewPost() {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="font-serif text-4xl text-foreground-bright">New Post</h1>
-      <p className="mt-3 text-sm text-muted">
-        Only reachable from the tailnet. Status defaults to draft — set it to published (or leave a future
-        &quot;Published at&quot; to schedule) when ready.
-      </p>
-      <BlogPostForm mode="create" />
-    </div>
+    <>
+      <Link href="/admin/blog" className="kicker hover:text-ink">← Blog</Link>
+      <h1 className="h-display mt-3 mb-8 text-4xl">New post</h1>
+      <PostForm />
+    </>
   );
 }

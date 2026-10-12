@@ -1,217 +1,145 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
-import { getProject, getProjects, type ProjectStatus } from "@/lib/projects";
-import { StatusBadge, TypeBadge, SkillTag } from "@/components/Badge";
-import ProjectSelectorStrip from "./ProjectSelectorStrip";
+import { ViewTransition } from "react";
+import { getProject, getProjects } from "@/lib/projects";
+import { accentOf, formatDate } from "@/lib/site";
+import { Reveal } from "@/components/motion/primitives";
+import StatusBadge from "@/components/projects/StatusBadge";
+import MetricCard from "@/components/projects/MetricCard";
+import Markdown from "@/components/Markdown";
 
 export const dynamic = "force-dynamic";
 
-const statusBadgeClass: Record<ProjectStatus, string> = {
-  "not-started": "badge-not-started",
-  "in-progress": "badge-in-progress",
-  done: "badge-done",
-};
+export async function generateMetadata(props: PageProps<"/projects/[slug]">): Promise<Metadata> {
+  const project = await getProject((await props.params).slug);
+  return project ? { title: project.title, description: project.summary } : {};
+}
 
-export default async function ProjectDetailPage(props: PageProps<"/projects/[slug]">) {
+export default async function ProjectPage(props: PageProps<"/projects/[slug]">) {
   const { slug } = await props.params;
-  const [project, allProjects] = await Promise.all([getProject(slug), getProjects()]);
+  const [project, all] = await Promise.all([getProject(slug), getProjects()]);
+  if (!project) notFound();
 
-  if (!project) {
-    notFound();
-  }
-
-  // Same signal layout.tsx uses to show the Admin nav link -- only present
-  // on tailnet-authenticated requests, never on public Funnel traffic.
-  const isDev = process.env.NODE_ENV === "development";
-  const hdrs = await headers();
-  const isAdmin = isDev || hdrs.has("tailscale-user-login");
+  const idx = all.findIndex((p) => p.slug === slug);
+  const prev = idx > 0 ? all[idx - 1] : null;
+  const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
+  const accent = accentOf(slug);
 
   return (
-    <div>
-      {/* Project selector strip -- every real project, current one highlighted */}
-      <ProjectSelectorStrip projects={allProjects} activeSlug={slug} />
+    <article className="shell pt-28 pb-16">
+      <Link href="/projects" className="kicker transition-colors hover:text-ink">← All work</Link>
 
-      {/* Cover image with status overlay */}
-      <div className="relative h-56 overflow-hidden border-b-2 border-foreground-bright sm:h-72">
-        {project.imageKey ? (
-          <Image
-            src={`/api/files/${project.imageKey}`}
-            alt={`${project.title} screenshot`}
-            fill
-            priority
-            className="object-cover"
-          />
-        ) : (
-          <div className="h-full w-full bg-foreground-bright" />
-        )}
-        <div className="absolute inset-0 bg-foreground-bright/40" />
-        <div className="absolute inset-0 flex items-end">
-          <div className="mx-auto w-full max-w-7xl px-6 pb-8 sm:px-8">
+      {/* Hero: the tile from the grid morphs into this card */}
+      <ViewTransition name={`project-${slug}`} share="morph" default="none">
+        <header
+          className="surface relative mt-6 overflow-hidden p-8 sm:p-12"
+          style={{ background: `linear-gradient(160deg, color-mix(in srgb, ${accent} 22%, transparent), rgb(255 255 255 / 0.02) 65%)` }}
+        >
+          <div className="flex flex-wrap items-center gap-3">
             <StatusBadge status={project.status} />
+            <span className="kicker">{project.track}</span>
           </div>
+          <h1 className="h-display mt-8 max-w-4xl text-[clamp(2.4rem,6vw,4.8rem)]">{project.title}</h1>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">{project.summary}</p>
+        </header>
+      </ViewTransition>
+
+      <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="min-w-0">
+          {project.description && project.description !== project.summary && (
+            <Reveal>
+              <p className="mb-10 border-l-2 border-ember pl-5 text-lg leading-relaxed text-ink/85">{project.description}</p>
+            </Reveal>
+          )}
+
+          {project.metricBefore && project.metricAfter && (
+            <Reveal className="mb-12 max-w-md">
+              <p className="label mb-4">Result</p>
+              <MetricCard before={project.metricBefore} after={project.metricAfter} label={project.metricLabel} />
+            </Reveal>
+          )}
+
+          {project.imageKey && (
+            <Reveal className="relative mb-12 aspect-video overflow-hidden rounded-2xl border border-line">
+              <Image src={`/api/files/${project.imageKey}`} alt={`${project.title} screenshot`} fill sizes="(min-width: 1024px) 760px, 100vw" className="object-cover" />
+            </Reveal>
+          )}
+
+          {project.details ? (
+            <Markdown>{project.details}</Markdown>
+          ) : (
+            <p className="surface p-6 text-muted">The write-up for this one is still being drafted.</p>
+          )}
         </div>
-      </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-          {/* Main content */}
-          <div className="lg:col-span-2">
-            <h1 className="font-serif text-foreground-bright mb-3 text-3xl leading-tight sm:text-4xl">
-              {project.title}
-            </h1>
-            <p className="mb-8 font-mono text-sm text-muted">{project.track}</p>
-            <p className="mb-10 border-l-4 border-foreground-bright pl-4 text-base leading-relaxed text-muted">
-              {project.description}
-            </p>
-
-            {project.metricBefore && project.metricAfter && (
-              <div className="mb-12 border-2 border-foreground-bright">
-                <div className="bg-foreground-bright px-6 py-3 text-background">
-                  <span className="font-mono text-xs font-bold tracking-widest uppercase">
-                    Performance Result{project.metricLabel ? ` · ${project.metricLabel}` : ""}
-                  </span>
-                </div>
-                <div className="grid grid-cols-3">
-                  <div className="border-r-2 border-foreground-bright bg-background px-6 py-8 text-center">
-                    <span className="mb-3 block font-mono text-xs font-bold tracking-widest text-muted uppercase">
-                      Before
-                    </span>
-                    <span className="font-serif text-foreground-bright block text-4xl sm:text-5xl">
-                      {project.metricBefore}
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-center justify-center border-r-2 border-foreground-bright bg-accent px-4 py-8 text-center">
-                    <div className="text-2xl text-white">&rarr;</div>
-                  </div>
-                  <div className="bg-background px-6 py-8 text-center">
-                    <span className="mb-3 block font-mono text-xs font-bold tracking-widest text-muted uppercase">
-                      After
-                    </span>
-                    <span className="font-serif text-accent block text-4xl sm:text-5xl">
-                      {project.metricAfter}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="mb-6 flex items-center gap-3">
-              <TypeBadge contentType={project.contentType} codeLanguage={project.codeLanguage} />
-              <span className="font-mono text-xs text-muted">
-                Last updated{" "}
-                {project.updatedAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-              </span>
-            </div>
-
-            {project.details ? (
-              <div className="prose prose-headings:font-serif prose-a:text-accent prose-strong:text-foreground-bright prose-code:before:content-none prose-code:after:content-none prose-pre:border-2 prose-pre:border-foreground-bright prose-pre:bg-foreground-bright prose-code:rounded-none prose-img:border-2 prose-img:border-foreground-bright max-w-none">
-                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>
-                  {project.details}
-                </ReactMarkdown>
-              </div>
-            ) : (
-              <div className="border-2 border-foreground-bright bg-border-soft/30 p-6 text-sm text-muted">
-                <p className="font-serif text-foreground-bright text-base">Coming soon</p>
-                <p className="mt-1">
-                  Placeholder content &mdash; ERD, schema, and query results will replace
-                  this once the writeup is added.
-                </p>
-              </div>
-            )}
+        {/* Rail */}
+        <aside className="lg:sticky lg:top-24 lg:self-start">
+          <div className="surface p-6">
+            <p className="label">Project chain</p>
+            <ol className="mt-4 space-y-1">
+              {all.map((p, i) => (
+                <li key={p.slug}>
+                  <Link
+                    href={`/projects/${p.slug}`}
+                    prefetch
+                    aria-current={p.slug === slug ? "page" : undefined}
+                    className={`flex gap-3 rounded-lg px-2 py-1.5 text-sm transition-colors ${p.slug === slug ? "bg-white/8 text-ink" : "text-muted hover:text-ink"}`}
+                  >
+                    <span className="font-mono text-xs leading-5 opacity-60">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="line-clamp-2">{p.title}</span>
+                  </Link>
+                </li>
+              ))}
+            </ol>
           </div>
 
-          {/* Sidebar */}
-          <aside className="lg:col-span-1">
-            <div className="sticky top-24 flex flex-col gap-6">
-              {/* Project info */}
-              <div className="border-2 border-foreground-bright bg-background">
-                <div className="bg-foreground-bright px-5 py-3 text-background">
-                  <span className="font-mono text-xs font-bold tracking-widest uppercase">Project Info</span>
-                </div>
-                <div className="flex flex-col gap-4 p-5">
-                  <div>
-                    <span className="mb-1 block font-mono text-xs tracking-widest text-muted uppercase">Status</span>
-                    <StatusBadge status={project.status} />
-                  </div>
-
-                  {project.links.length > 0 && (
-                    <div>
-                      <span className="mb-2 block font-mono text-xs tracking-widest text-muted uppercase">Links</span>
-                      <div className="flex flex-col gap-2">
-                        {project.links.map((link) => (
-                          <a
-                            key={link.url}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 border border-foreground-bright px-3 py-2 font-mono text-xs font-bold transition-colors hover:bg-foreground-bright hover:text-background"
-                          >
-                            {link.label} &rarr;
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div>
-                    <span className="mb-2 block font-mono text-xs tracking-widest text-muted uppercase">Skills</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.skills.map((skill) => (
-                        <SkillTag key={skill} skill={skill} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Project chain */}
-              <div className="border-2 border-foreground-bright bg-border-soft/30">
-                <div className="bg-accent px-5 py-3 text-white">
-                  <span className="font-mono text-xs font-bold tracking-widest uppercase">Project Chain</span>
-                </div>
-                <div className="flex flex-col gap-2 p-5">
-                  {allProjects.map((p, idx) => (
-                    <Link
-                      key={p.slug}
-                      href={`/projects/${p.slug}`}
-                      className={`flex items-center gap-3 border border-foreground-bright px-3 py-2 font-mono text-xs transition-colors ${
-                        p.slug === slug ? "bg-foreground-bright text-background" : "bg-background hover:bg-border-soft/50"
-                      }`}
-                    >
-                      <span className="opacity-40">{String(idx + 1).padStart(2, "0")}</span>
-                      <span className="font-bold">{p.title}</span>
-                      <span className={`ml-auto px-1.5 py-0.5 text-[10px] ${statusBadgeClass[p.status]}`}>
-                        {p.status}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              {isAdmin && (
-                <Link
-                  href={`/admin/projects/${slug}`}
-                  className="border-2 border-accent bg-accent px-4 py-3 text-center font-mono text-xs font-bold tracking-widest text-white uppercase transition-opacity hover:opacity-85"
-                >
-                  Edit Project
-                </Link>
-              )}
-
-              <Link
-                href="/projects"
-                className="border border-foreground-bright px-4 py-3 text-center font-mono text-xs font-bold tracking-widest uppercase transition-colors hover:bg-foreground-bright hover:text-background"
-              >
-                &larr; Back to Portfolio
-              </Link>
+          {project.skills?.length > 0 && (
+            <div className="surface mt-4 p-6">
+              <p className="label">Stack</p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {project.skills.map((s) => (
+                  <li key={s} className="chip">{s}</li>
+                ))}
+              </ul>
             </div>
-          </aside>
-        </div>
+          )}
+
+          {project.links.length > 0 && (
+            <div className="surface mt-4 p-6">
+              <p className="label">Links</p>
+              <ul className="mt-4 space-y-2 text-sm">
+                {project.links.map((l) => (
+                  <li key={l.url}>
+                    <a href={l.url} target="_blank" rel="noopener noreferrer" className="text-ember-soft underline-offset-4 hover:underline">
+                      {l.label} ↗
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <p className="mt-4 px-2 font-mono text-xs text-muted">Updated {formatDate(project.updatedAt)}</p>
+        </aside>
       </div>
-    </div>
+
+      {/* Prev / next */}
+      <nav aria-label="More projects" className="mt-20 grid gap-4 border-t border-line pt-10 sm:grid-cols-2">
+        {prev ? (
+          <Link href={`/projects/${prev.slug}`} prefetch className="group surface p-6 transition-colors hover:border-white/20">
+            <span className="kicker">← Previous</span>
+            <p className="mt-2 font-display text-2xl transition-transform duration-300 ease-std group-hover:-translate-x-1">{prev.title}</p>
+          </Link>
+        ) : <span />}
+        {next && (
+          <Link href={`/projects/${next.slug}`} prefetch className="group surface p-6 text-right transition-colors hover:border-white/20">
+            <span className="kicker">Next →</span>
+            <p className="mt-2 font-display text-2xl transition-transform duration-300 ease-std group-hover:translate-x-1">{next.title}</p>
+          </Link>
+        )}
+      </nav>
+    </article>
   );
 }

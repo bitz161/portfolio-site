@@ -2,36 +2,19 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16">
-      <span className="chip-brutal bg-accent-danger">404</span>
-      <h1 className="mt-5 font-serif text-4xl text-foreground-bright sm:text-5xl">
-        Empty set.
+    <section className="shell flex min-h-[80dvh] flex-col justify-center pt-28">
+      <p className="label">404</p>
+      <h1 className="h-display mt-4 text-[clamp(3.4rem,10vw,8rem)]">
+        <span className="mask"><span>Empty</span></span> <span className="mask"><span style={{ "--i": 1 } as React.CSSProperties}><em className="text-ember-soft">set.</em></span></span>
       </h1>
-      <p className="mt-7 text-lg leading-8 text-muted">
-        That page doesn&apos;t exist — or it never did.
-      </p>
-
-      <div className="card-brutal mt-8 bg-card p-6 font-mono text-sm">
-        <p className="text-muted">
-          <span className="text-accent-danger">mysql&gt;</span> SELECT * FROM pages WHERE path = &apos;this one&apos;;
-        </p>
+      <div className="surface fade-in mt-10 max-w-xl p-6 font-mono text-sm" style={{ "--d": "500ms" } as React.CSSProperties}>
+        <p><span className="text-ember-soft">mysql&gt;</span> SELECT * FROM pages WHERE path = &apos;this one&apos;;</p>
         <p className="mt-2 text-muted">Empty set (0.00 sec)</p>
       </div>
-
-      <div className="mt-8 flex flex-wrap gap-4">
-        <Link href="/" className="btn-pill">
-          Home
-          <span className="btn-pill-icon" aria-hidden>
-            &rarr;
-          </span>
-        </Link>
-        <Link href="/projects" className="btn-pill-ghost">
-          Projects
-          <span className="btn-pill-icon" aria-hidden>
-            &rarr;
-          </span>
-        </Link>
+      <div className="fade-in mt-10 flex gap-3" style={{ "--d": "700ms" } as React.CSSProperties}>
+        <Link href="/" className="btn">Home</Link>
+        <Link href="/projects" className="btn-ghost">Work</Link>
       </div>
-    </div>
+    </section>
   );
 }

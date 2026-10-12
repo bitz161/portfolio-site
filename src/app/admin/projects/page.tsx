@@ -1,78 +1,49 @@
 import Link from "next/link";
 import { listAdminProjects } from "@/lib/admin-projects";
+import StatusBadge from "@/components/projects/StatusBadge";
 
 export const dynamic = "force-dynamic";
 
-const STATUS_LABEL: Record<string, string> = {
-  "not-started": "Not started",
-  "in-progress": "In progress",
-  done: "Done",
-};
-
-export default async function AdminProjectsPage() {
+export default async function AdminProjects() {
   const projects = await listAdminProjects();
-
   return (
-    <div className="mx-auto max-w-5xl px-6 py-16">
-      <div className="flex items-center justify-between">
-        <h1 className="font-serif text-4xl text-foreground-bright">Manage Projects</h1>
-        <Link href="/admin/new" className="text-sm font-semibold text-accent hover:underline">
-          + Add project
-        </Link>
+    <>
+      <div className="flex items-end justify-between gap-4">
+        <h1 className="h-display text-5xl">Projects</h1>
+        <Link href="/admin/projects/new" className="btn">+ New project</Link>
       </div>
-      <p className="mt-3 text-sm text-muted">
-        Includes drafts. Editing links (removing/reordering) is still manual SQL — see PROJECTS.md.
-      </p>
-
-      <div className="mt-8 overflow-x-auto">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b-2 border-border-soft text-foreground-bright">
-              <th className="py-2 pr-4">Title</th>
-              <th className="py-2 pr-4">Track</th>
-              <th className="py-2 pr-4">Progress</th>
-              <th className="py-2 pr-4">Visibility</th>
-              <th className="py-2 pr-4">Order</th>
-              <th className="py-2"></th>
+      <div className="surface mt-8 overflow-x-auto">
+        <table className="w-full text-left text-sm">
+          <thead className="text-muted">
+            <tr className="border-b border-line">
+              <th className="px-5 py-3 font-normal">Order</th>
+              <th className="px-5 py-3 font-normal">Title</th>
+              <th className="px-5 py-3 font-normal">Status</th>
+              <th className="px-5 py-3 font-normal">Visibility</th>
+              <th className="px-5 py-3" />
             </tr>
           </thead>
           <tbody>
             {projects.map((p) => (
-              <tr key={p.id} className="border-b border-border-soft/50">
-                <td className="py-3 pr-4 font-semibold text-foreground-bright">{p.title}</td>
-                <td className="py-3 pr-4 text-muted">{p.track}</td>
-                <td className="py-3 pr-4">
-                  <span className="chip-brutal">{STATUS_LABEL[p.status] ?? p.status}</span>
+              <tr key={p.slug} className="border-b border-line last:border-0 hover:bg-white/[0.02]">
+                <td className="px-5 py-3 font-mono text-muted">{p.sortOrder}</td>
+                <td className="px-5 py-3">
+                  <p>{p.title}</p>
+                  <p className="font-mono text-xs text-muted">{p.slug}</p>
                 </td>
-                <td className="py-3 pr-4">
-                  <span
-                    className={
-                      p.visibility === "published"
-                        ? "chip-brutal bg-accent-lime"
-                        : "chip-brutal bg-card text-muted"
-                    }
-                  >
-                    {p.visibility}
-                  </span>
-                </td>
-                <td className="py-3 pr-4 text-muted">{p.sortOrder}</td>
-                <td className="py-3 text-right">
-                  <Link href={`/admin/projects/${p.slug}`} className="font-semibold text-accent hover:underline">
-                    Edit
-                  </Link>
+                <td className="px-5 py-3"><StatusBadge status={p.status} /></td>
+                <td className={`px-5 py-3 font-mono text-xs ${p.visibility === "published" ? "text-brass-soft" : "text-muted"}`}>{p.visibility}</td>
+                <td className="px-5 py-3 text-right whitespace-nowrap">
+                  <Link href={`/admin/projects/${p.slug}`} className="text-ember-soft hover:underline">Edit</Link>
+                  {p.visibility === "published" && (
+                    <Link href={`/projects/${p.slug}`} className="ml-4 text-muted hover:text-ink">View ↗</Link>
+                  )}
                 </td>
               </tr>
             ))}
-            {projects.length === 0 && (
-              <tr>
-                <td colSpan={6} className="py-6 text-center text-muted">
-                  No projects yet.
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 }

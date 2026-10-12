@@ -1,18 +1,26 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminPost } from "@/lib/admin-blog";
-import BlogPostForm from "../BlogPostForm";
+import PostForm from "../PostForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditBlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function EditPost(props: PageProps<"/admin/blog/[slug]">) {
+  const { slug } = await props.params;
   const post = await getAdminPost(slug);
   if (!post) notFound();
-
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="font-serif text-4xl text-foreground-bright">Edit Post</h1>
-      <BlogPostForm mode="edit" initial={post} />
-    </div>
+    <>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <Link href="/admin/blog" className="kicker hover:text-ink">← Blog</Link>
+          <h1 className="h-display mt-3 text-4xl">{post.title}</h1>
+        </div>
+        {post.status === "published" && <Link href={`/blog/${slug}`} className="btn-ghost">View live ↗</Link>}
+      </div>
+      <div className="mt-8">
+        <PostForm post={post} />
+      </div>
+    </>
   );
 }

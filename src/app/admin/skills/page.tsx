@@ -1,21 +1,19 @@
-import { getAllUsedSkills, getSkillCategoryMap, DEFAULT_CATEGORY } from "@/lib/skill-categories";
-import SkillCategoriesForm from "./SkillCategoriesForm";
+import { getAllUsedSkills, getSkillCategoryMap, DEFAULT_CATEGORY, SKILL_CATEGORIES } from "@/lib/skill-categories";
+import SkillRow from "./SkillRow";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminSkillsPage() {
-  const [skills, categoryMap] = await Promise.all([getAllUsedSkills(), getSkillCategoryMap()]);
-  const rows = skills.map((skill) => ({ skill, category: categoryMap[skill] ?? DEFAULT_CATEGORY }));
-
+export default async function AdminSkills() {
+  const [skills, map] = await Promise.all([getAllUsedSkills(), getSkillCategoryMap()]);
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16 sm:px-8">
-      <h1 className="font-serif text-foreground-bright text-4xl leading-none">Skills &amp; Tools</h1>
-      <p className="mt-3 font-mono text-sm text-muted">
-        Every skill used across all projects, and which "Skills &amp; Tools" group it shows under on the
-        homepage. Uncategorized skills default to Analysis. Add a new skill by typing it into a project's
-        Skills field first -- it'll appear here automatically.
-      </p>
-      <SkillCategoriesForm rows={rows} />
-    </div>
+    <>
+      <h1 className="h-display text-5xl">Skills</h1>
+      <p className="mt-3 max-w-xl text-muted">Groups the homepage stack section. Changes save as soon as you pick a category.</p>
+      <ul className="surface mt-8 divide-y divide-line">
+        {skills.map((s) => (
+          <SkillRow key={s} skill={s} category={map[s] ?? DEFAULT_CATEGORY} categories={[...SKILL_CATEGORIES]} />
+        ))}
+      </ul>
+    </>
   );
 }

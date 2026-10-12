@@ -1,52 +1,32 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
-import { Archivo_Black, DM_Sans, Space_Mono } from "next/font/google";
+import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import NavBar from "@/components/NavBar";
-import Footer from "@/components/Footer";
+import Nav from "@/components/site/Nav";
+import Footer from "@/components/site/Footer";
+import { MotionProvider, Orbs } from "@/components/motion/primitives";
 
-const dmSans = DM_Sans({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const archivoBlack = Archivo_Black({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const spaceMono = Space_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-});
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const instrument = Instrument_Serif({ variable: "--font-instrument", subsets: ["latin"], weight: "400", style: ["normal", "italic"] });
+const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Josue Garcia — Data & Database Portfolio",
-  description:
-    "Data analyst and database engineering portfolio, self-hosted on a home server.",
+  title: { default: "Josue Garcia · Database & Data Engineering", template: "%s · Josue Garcia" },
+  description: "Database administration and data engineering work, built and run on a self-hosted stack.",
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  // Same signal middleware.ts uses to gate /admin: tailscaled only stamps
-  // this header on requests from an authenticated tailnet peer, never on
-  // public Funnel traffic. Shows the Admin nav link only when it's present,
-  // so the link "auto-detects" whether you're on the tailnet.
-  const isDev = process.env.NODE_ENV === "development";
-  const hdrs = await headers();
-  const isAdmin = isDev || hdrs.has("tailscale-user-login");
-
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${dmSans.variable} ${archivoBlack.variable} ${spaceMono.variable} h-full antialiased`}
-    >
-      <body className="flex min-h-full flex-col bg-background text-foreground">
-        <NavBar isAdmin={isAdmin} />
-        <main className="flex-1">{children}</main>
-        <Footer />
+    <html lang="en" className={`${inter.variable} ${instrument.variable} ${jetbrains.variable} antialiased`}>
+      <body className="flex min-h-dvh flex-col font-sans">
+        <MotionProvider>
+          <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-bg">
+            Skip to content
+          </a>
+          <Orbs />
+          <Nav />
+          <main id="main" className="flex-1">{children}</main>
+          <Footer />
+        </MotionProvider>
       </body>
     </html>
   );

@@ -1,64 +1,45 @@
 import Link from "next/link";
 import { listAdminPosts } from "@/lib/admin-blog";
+import { formatDate } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminBlogPage() {
+export default async function AdminBlog() {
   const posts = await listAdminPosts();
-
   return (
-    <div className="mx-auto max-w-5xl px-6 py-16">
-      <div className="flex items-center justify-between">
-        <h1 className="font-serif text-4xl text-foreground-bright">Manage Blog</h1>
-        <Link href="/admin/blog/new" className="text-sm font-semibold text-accent hover:underline">
-          + New post
-        </Link>
+    <>
+      <div className="flex items-end justify-between gap-4">
+        <h1 className="h-display text-5xl">Blog</h1>
+        <Link href="/admin/blog/new" className="btn">+ New post</Link>
       </div>
-      <p className="mt-3 text-sm text-muted">Includes drafts.</p>
-
-      <div className="mt-8 overflow-x-auto">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b-2 border-border-soft text-foreground-bright">
-              <th className="py-2 pr-4">Title</th>
-              <th className="py-2 pr-4">Status</th>
-              <th className="py-2 pr-4">Published at</th>
-              <th className="py-2"></th>
+      <div className="surface mt-8 overflow-x-auto">
+        <table className="w-full text-left text-sm">
+          <thead className="text-muted">
+            <tr className="border-b border-line">
+              <th className="px-5 py-3 font-normal">Title</th>
+              <th className="px-5 py-3 font-normal">Status</th>
+              <th className="px-5 py-3 font-normal">Published</th>
+              <th className="px-5 py-3" />
             </tr>
           </thead>
           <tbody>
+            {posts.length === 0 && (
+              <tr><td colSpan={4} className="px-5 py-6 text-muted">No posts yet.</td></tr>
+            )}
             {posts.map((p) => (
-              <tr key={p.id} className="border-b border-border-soft/50">
-                <td className="py-3 pr-4 font-semibold text-foreground-bright">{p.title}</td>
-                <td className="py-3 pr-4">
-                  <span
-                    className={
-                      p.status === "published" ? "chip-brutal bg-accent-lime" : "chip-brutal bg-card text-muted"
-                    }
-                  >
-                    {p.status}
-                  </span>
-                </td>
-                <td className="py-3 pr-4 text-muted">
-                  {p.publishedAt ? new Date(p.publishedAt).toLocaleString() : "—"}
-                </td>
-                <td className="py-3 text-right">
-                  <Link href={`/admin/blog/${p.slug}`} className="font-semibold text-accent hover:underline">
-                    Edit
-                  </Link>
+              <tr key={p.slug} className="border-b border-line last:border-0 hover:bg-white/[0.02]">
+                <td className="px-5 py-3"><p>{p.title}</p><p className="font-mono text-xs text-muted">{p.slug}</p></td>
+                <td className={`px-5 py-3 font-mono text-xs ${p.status === "published" ? "text-brass-soft" : "text-muted"}`}>{p.status}</td>
+                <td className="px-5 py-3 text-muted">{formatDate(p.publishedAt)}</td>
+                <td className="px-5 py-3 text-right whitespace-nowrap">
+                  <Link href={`/admin/blog/${p.slug}`} className="text-ember-soft hover:underline">Edit</Link>
+                  {p.status === "published" && <Link href={`/blog/${p.slug}`} className="ml-4 text-muted hover:text-ink">View ↗</Link>}
                 </td>
               </tr>
             ))}
-            {posts.length === 0 && (
-              <tr>
-                <td colSpan={4} className="py-6 text-center text-muted">
-                  No posts yet.
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 }
