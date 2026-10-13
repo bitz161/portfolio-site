@@ -334,3 +334,47 @@ body {
     transition-duration: 1ms !important;
   }
 }
+
+/* Scrollbars. Chromium/Safari get the full design via ::-webkit-scrollbar; Chromium 121+
+   ignores those pseudo-elements once scrollbar-color is set, so the standard properties
+   are only applied where ::-webkit-scrollbar isn't supported (Firefox). */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  border: 3px solid var(--color-bg);
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-steel) 70%, #2a2d33), color-mix(in srgb, var(--color-ember) 60%, #2a2d33));
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--color-steel), var(--color-ember));
+}
+::-webkit-scrollbar-corner {
+  background: var(--color-bg);
+}
+/* inner scroll areas (code blocks, tables, admin lists): slimmer, no track */
+:where(pre, table, .surface, textarea)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+:where(pre, table, .surface, textarea)::-webkit-scrollbar-track {
+  background: transparent;
+}
+:where(pre, table, .surface, textarea)::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  background-color: rgb(255 255 255 / 0.18);
+}
+:where(pre, table, .surface, textarea)::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-ember);
+}
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-ember) 70%, var(--color-steel)) var(--color-bg);
+  }
+}
