@@ -40,7 +40,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "== 2. Packaging source ==" -ForegroundColor Cyan
-tar --exclude=node_modules --exclude=.next --exclude=.git -czf $tmpTar .
+tar --exclude=node_modules --exclude=.next --exclude=.git --exclude=".env*" --exclude=.superpowers --exclude=.impeccable -czf $tmpTar .
 if ($LASTEXITCODE -ne 0) { Write-Host "tar failed" -ForegroundColor Red; exit 1 }
 
 Write-Host "== 3. Copying to swe-2 (unpack beside the live folder, then swap) ==" -ForegroundColor Cyan
