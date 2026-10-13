@@ -10,6 +10,8 @@ const instrument = Instrument_Serif({ variable: "--font-instrument", subsets: ["
 const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  // SITE_URL is set to the public domain once it is live; until then absolute URLs stay on the tailnet name.
+  metadataBase: new URL(process.env.SITE_URL ?? "https://swe-2.tail174d56.ts.net"),
   title: { default: "Josue Garcia · Database & Data Engineering", template: "%s · Josue Garcia" },
   description: "Database administration and data engineering work, built and run on a self-hosted stack.",
 };

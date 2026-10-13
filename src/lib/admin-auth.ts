@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
+import { viaCloudflare } from "@/lib/origin-guard";
 
 // Defense-in-depth: middleware.ts already gates /admin and /api/admin/* on
 // the Tailscale-User-Login header, but each admin write route re-checks it
 // directly in case it's ever reached some other way.
 export function requireTailscaleIdentity(request: Request) {
   const isDev = process.env.NODE_ENV === "development";
-  if (!isDev && !request.headers.has("Tailscale-User-Login")) {
+  if (!isDev && (viaCloudflare(request.headers) || !request.headers.has("Tailscale-User-Login"))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   return null;

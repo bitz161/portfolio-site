@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { viaCloudflare } from "@/lib/origin-guard";
 
 // Gates the admin write path to Tailscale-authenticated requests only.
 // swe-2's tailscaled reverse-proxies both `tailscale serve` (tailnet-only)
@@ -10,6 +11,12 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const isDev = process.env.NODE_ENV === "development";
   const hasTailscaleIdentity = request.headers.has("Tailscale-User-Login");
+
+  // Public traffic through the Cloudflare tunnel can carry any header the visitor likes,
+  // including a forged Tailscale-User-Login, so it never counts as the tailnet.
+  if (!isDev && viaCloudflare(request.headers)) {
+    return NextResponse.json({ error: "Admin routes are only reachable from the tailnet." }, { status: 403 });
+  }
 
   if (!isDev && !hasTailscaleIdentity) {
     return NextResponse.json(
