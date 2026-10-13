@@ -12,6 +12,8 @@ const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["lati
 export const metadata: Metadata = {
   // SITE_URL is set to the public domain once it is live; until then absolute URLs stay on the tailnet name.
   metadataBase: new URL(process.env.SITE_URL ?? "https://swe-2.tail174d56.ts.net"),
+  // each page names its own path on SITE_URL as canonical, so the ts.net copy never competes with the domain
+  alternates: { canonical: "./" },
   title: { default: "Josue Garcia · Database & Data Engineering", template: "%s · Josue Garcia" },
   description: "Database administration and data engineering work, built and run on a self-hosted stack.",
 };
