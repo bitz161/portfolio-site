@@ -1,6 +1,6 @@
 import { getProjects } from "@/lib/projects";
 import { getPublishedPosts } from "@/lib/blog";
-import { getSkillCategoryMap } from "@/lib/skill-categories";
+import { getSkillCategoryMap, getSkillGroups } from "@/lib/skill-categories";
 import { SITE, speedup } from "@/lib/site";
 import { skillGroups, toGrid } from "@/lib/derived";
 import { CountUp, Magnetic, Reveal } from "@/components/motion/primitives";
@@ -16,11 +16,11 @@ export const dynamic = "force-dynamic";
 const WORDS: [string, boolean][] = [["Systems", false], ["that", false], ["don't break.", true]];
 
 export default async function Home() {
-  const [projects, posts, categoryMap] = await Promise.all([getProjects(), getPublishedPosts(), getSkillCategoryMap()]);
+  const [projects, posts, categoryMap, groupNames] = await Promise.all([getProjects(), getPublishedPosts(), getSkillCategoryMap(), getSkillGroups()]);
   const done = projects.filter((p) => p.status === "done").length;
   const metric = projects.find((p) => p.metricBefore && p.metricAfter);
   const factor = metric ? speedup(metric.metricBefore!, metric.metricAfter!) : null;
-  const groups = skillGroups(projects, categoryMap);
+  const groups = skillGroups(projects, categoryMap, groupNames);
   const skillCount = groups.reduce((n, g) => n + g.skills.length, 0);
 
   const stats = [
