@@ -1,4 +1,4 @@
-import Link from "next/link";
+import ActionLink from "@/components/site/ActionLink";
 
 export default function NotFound() {
   return (
@@ -12,8 +12,8 @@ export default function NotFound() {
         <p className="mt-2 text-muted">Empty set (0.00 sec)</p>
       </div>
       <div className="fade-in mt-10 flex gap-3" style={{ "--d": "700ms" } as React.CSSProperties}>
-        <Link href="/" className="btn">Home</Link>
-        <Link href="/projects" className="btn-ghost">Work</Link>
+        <ActionLink href="/" icon="right">Home</ActionLink>
+        <ActionLink href="/projects" variant="ghost">Work</ActionLink>
       </div>
     </section>
   );

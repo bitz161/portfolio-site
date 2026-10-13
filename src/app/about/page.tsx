@@ -3,6 +3,7 @@ import Image from "next/image";
 import { SITE } from "@/lib/site";
 import { Reveal } from "@/components/motion/primitives";
 import CopyEmail from "@/components/site/CopyEmail";
+import ActionLink from "@/components/site/ActionLink";
 
 export const metadata: Metadata = { title: "About" };
 
@@ -65,8 +66,8 @@ export default function AboutPage() {
           </div>
           <CopyEmail email={SITE.email} />
           <div className="flex flex-wrap gap-3">
-            <a className="btn-ghost" href={SITE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-            <a className="btn-ghost" href={SITE.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+            <ActionLink href={SITE.linkedin} icon="out" variant="ghost">LinkedIn</ActionLink>
+            <ActionLink href={SITE.github} icon="out" variant="ghost">GitHub</ActionLink>
           </div>
         </Reveal>
       </section>

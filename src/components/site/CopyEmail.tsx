@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { EMPH } from "@/components/motion/primitives";
+import { ActionChip } from "@/components/site/ActionLink";
 
 const COLORS = ["#4f7fa8", "#e2703a", "#c9a24a", "#ecebe8"];
 
@@ -55,40 +56,52 @@ export default function CopyEmail({ email }: { email: string }) {
 
   async function copy(e: React.MouseEvent<HTMLButtonElement>) {
     if (done) return;
+    // read before awaiting: React clears e.currentTarget once the handler yields
+    const r = e.currentTarget.getBoundingClientRect();
     try {
       await navigator.clipboard.writeText(email);
     } catch {
       location.href = `mailto:${email}`;
       return;
     }
-    const r = e.currentTarget.getBoundingClientRect();
     setDone(true);
     burst(r.left + r.width / 2, r.top + r.height / 2);
     setTimeout(() => setDone(false), 2400);
   }
 
   return (
-    <div className="flex items-center gap-4">
-      <motion.button
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+      <button
         onClick={copy}
-        layout
-        transition={{ layout: { duration: 0.5, ease: EMPH } }}
-        className={`relative flex h-14 items-center justify-center overflow-hidden rounded-full font-medium text-bg ${done ? "w-14 bg-brass" : "bg-ink px-7"}`}
+        className="act"
+        style={done ? ({ "--chip-bg": "var(--color-brass)", "--chip-fg": "var(--color-bg)" } as React.CSSProperties) : undefined}
         aria-label={done ? "Email copied" : `Copy email address ${email}`}
       >
-        <AnimatePresence mode="popLayout" initial={false}>
-          {done ? (
-            <motion.svg key="ok" viewBox="0 0 26 26" className="h-6 w-6" initial={{ scale: 0.6 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 400, damping: 14 }}>
-              <motion.path d="M6 13.5l4.5 4.5L20 8" fill="none" stroke="currentColor" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.38, delay: 0.12 }} />
-            </motion.svg>
-          ) : (
-            <motion.span key="lbl" className="whitespace-nowrap" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }}>
-              Copy email
+        <span className="act-label relative inline-grid overflow-hidden">
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.span
+              key={done ? "done" : "idle"}
+              className="whitespace-nowrap"
+              initial={{ y: "110%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-110%" }}
+              transition={{ duration: 0.45, ease: EMPH }}
+            >
+              {done ? "Copied" : "Copy email"}
             </motion.span>
-          )}
-        </AnimatePresence>
-      </motion.button>
-      <span aria-live="polite" className="font-mono text-sm text-muted">{done ? "Copied to clipboard" : email}</span>
+          </AnimatePresence>
+        </span>
+        {done ? (
+          <span className="act-chip">
+            <motion.svg viewBox="0 0 24 24" className="h-[1.1rem] w-[1.1rem]" initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 420, damping: 14 }}>
+              <motion.path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.38, delay: 0.1 }} />
+            </motion.svg>
+          </span>
+        ) : (
+          <ActionChip icon="mail" />
+        )}
+      </button>
+      <span aria-live="polite" className="font-mono text-sm text-muted">{done ? "In your clipboard" : email}</span>
     </div>
   );
 }

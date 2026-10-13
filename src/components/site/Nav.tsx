@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { EMPH } from "@/components/motion/primitives";
 import { SITE } from "@/lib/site";
+import ActionLink from "@/components/site/ActionLink";
 
 const LINKS = [
   { href: "/projects", label: "Work" },
@@ -51,8 +52,8 @@ export default function Nav() {
         transition={{ duration: 0.35, ease: EMPH }}
       >
         <div className="shell mt-3">
-          <nav className="flex items-center justify-between rounded-full border border-line bg-bg/70 py-2 pr-2 pl-5 backdrop-blur-xl">
-            <Link href="/" className="font-display text-xl tracking-tight">
+          <nav className="flex items-center justify-between rounded-full border border-line bg-bg/70 py-2 pr-2 pl-6 backdrop-blur-xl">
+            <Link href="/" className="font-display text-[1.65rem] leading-none tracking-[0.03em]">
               Josue Garcia<span className="text-ember">.</span>
             </Link>
             <ul className="hidden items-center gap-1 sm:flex">
@@ -60,7 +61,7 @@ export default function Nav() {
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className={`relative rounded-full px-4 py-2 text-sm transition-colors duration-150 ${active(l.href) ? "text-ink" : "text-muted hover:text-ink"}`}
+                    className={`relative rounded-full px-5 py-2 text-base transition-colors duration-150 ${active(l.href) ? "text-ink" : "text-muted hover:text-ink"}`}
                   >
                     {active(l.href) && (
                       <motion.span
@@ -74,9 +75,7 @@ export default function Nav() {
                 </li>
               ))}
               <li>
-                <a href={`mailto:${SITE.email}`} className="btn ml-2 py-2">
-                  Contact
-                </a>
+                <ActionLink href={`mailto:${SITE.email}`} icon="mail" size="sm" className="ml-2">Contact</ActionLink>
               </li>
             </ul>
             <button

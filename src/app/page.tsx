@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getProjects } from "@/lib/projects";
 import { getPublishedPosts } from "@/lib/blog";
 import { getSkillCategoryMap } from "@/lib/skill-categories";
@@ -8,6 +7,7 @@ import { CountUp, Magnetic, Reveal } from "@/components/motion/primitives";
 import ProjectGrid from "@/components/projects/ProjectGrid";
 import SectionHead from "@/components/site/SectionHead";
 import CopyEmail from "@/components/site/CopyEmail";
+import ActionLink from "@/components/site/ActionLink";
 import PostCard from "@/components/blog/PostCard";
 
 export const dynamic = "force-dynamic";
@@ -56,13 +56,9 @@ export default async function Home() {
         </p>
         <div className="fade-in mt-10 flex flex-wrap items-center gap-4" style={{ "--d": "1050ms" } as React.CSSProperties}>
           <Magnetic>
-            <a href="#work" className="btn px-8 py-4 text-base">
-              See the work <span aria-hidden>↓</span>
-            </a>
+            <ActionLink href="#work" icon="down">See the work</ActionLink>
           </Magnetic>
-          <a href={SITE.github} target="_blank" rel="noopener noreferrer" className="btn-ghost px-8 py-4 text-base">
-            GitHub <span aria-hidden>↗</span>
-          </a>
+          <ActionLink href={SITE.github} icon="out" variant="ghost">GitHub</ActionLink>
         </div>
       </section>
 
@@ -123,7 +119,7 @@ export default async function Home() {
             ))}
           </div>
           <Reveal i={2} className="mt-8">
-            <Link href="/blog" className="btn-ghost">All writing →</Link>
+            <ActionLink href="/blog" variant="ghost">All writing</ActionLink>
           </Reveal>
         </section>
       )}
@@ -141,8 +137,8 @@ export default async function Home() {
         <Reveal i={2} className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <CopyEmail email={SITE.email} />
           <div className="flex gap-3">
-            <a className="btn-ghost" href={SITE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-            <a className="btn-ghost" href={SITE.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+            <ActionLink href={SITE.linkedin} icon="out" variant="ghost">LinkedIn</ActionLink>
+            <ActionLink href={SITE.github} icon="out" variant="ghost">GitHub</ActionLink>
           </div>
         </Reveal>
       </section>
