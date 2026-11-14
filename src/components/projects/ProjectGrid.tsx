@@ -21,7 +21,8 @@ const ORDER: ProjectStatus[] = ["done", "in-progress", "not-started"];
  * The work as a plain ledger grouped by status. On wide screens the row in hand shows its
  * summary in the panel at the right; `side` (the section's heading) sits in the left column.
  */
-export default function ProjectGrid({ projects, side }: { projects: GridProject[]; side: ReactNode }) {
+/** `headingLevel` is the level of the status group headings: h3 under a section h2, h2 when the page h1 is directly above. */
+export default function ProjectGrid({ projects, side, headingLevel: Heading = "h3" }: { projects: GridProject[]; side: ReactNode; headingLevel?: "h2" | "h3" }) {
   const [slug, setSlug] = useState(projects[0]?.slug);
   const shown = projects.find((p) => p.slug === slug) ?? projects[0];
 
@@ -35,9 +36,9 @@ export default function ProjectGrid({ projects, side }: { projects: GridProject[
           if (group.length === 0) return null;
           return (
             <section key={status} className="ledger-group">
-              <h3 className="soft pb-1">
+              <Heading className="soft pb-1">
                 {STATUS_LABEL[status]}, {group.length}
-              </h3>
+              </Heading>
               <Stagger gap={0.04}>
                 {group.map((p) => (
                   <StaggerItem key={p.slug}>

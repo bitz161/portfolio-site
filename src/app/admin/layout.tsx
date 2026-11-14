@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
         <p className="label">Admin · tailnet only</p>
         <nav className="flex flex-wrap gap-1">
           {TABS.map((t) => (
-            <Link key={t.href} href={t.href} className="rounded-full px-4 py-2 text-sm text-muted transition-colors hover:bg-white/5 hover:text-ink">
+            <Link key={t.href} href={t.href} className="rounded-full px-4 py-3 text-sm text-muted transition-colors hover:bg-white/5 hover:text-ink">
               {t.label}
             </Link>
           ))}

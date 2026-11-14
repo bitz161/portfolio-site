@@ -168,7 +168,7 @@ body {
     background: #2c4785;
   }
   .act-sm {
-    min-height: 2.5rem;
+    min-height: 2.75rem;
     padding: 0 1rem;
   }
 
@@ -214,13 +214,18 @@ body {
     display: flex;
     gap: clamp(1rem, 2.4vw, 2.25rem);
   }
-  .nav-links a {
+  .nav-links a,
+  .site-head nav > a,
+  .nav-toggle {
     position: relative;
+    /* a 44px hit area; the negative margin keeps the header the same height */
+    padding-block: 0.75rem;
+    margin-block: -0.75rem;
   }
   .nav-links a::after {
     content: "";
     position: absolute;
-    inset: auto 0 -4px 0;
+    inset: auto 0 calc(0.75rem - 4px) 0;
     height: 2px;
     background: currentColor;
     transform: scaleX(0);
@@ -251,6 +256,7 @@ body {
       background: var(--color-surface);
     }
     .nav-links[data-open="true"] a {
+      margin-block: 0;
       padding-block: 0.5rem;
       font-size: var(--step-poster);
       font-weight: 800;
@@ -723,6 +729,11 @@ body {
   .foot-cols p:first-child {
     font-weight: 800;
   }
+  .foot-cols li a {
+    display: inline-block;
+    padding-block: 0.6rem;
+    margin-block: -0.6rem;
+  }
   .foot-cols li,
   .foot-cols p + p {
     margin-top: 0.3rem;
@@ -869,6 +880,10 @@ body {
 .about.detail .prose-site {
   max-width: 64rem;
   font-size: clamp(1.125rem, 0.9rem + 0.45vw, 1.375rem);
+}
+/* a readable measure for running text; tables and code blocks stay full width */
+.prose-site :where(p, ul, ol, blockquote, h1, h2, h3, h4) {
+  max-width: 52ch;
 }
 .prose-site :where(h1, h2, h3) {
   scroll-margin-top: 2rem;

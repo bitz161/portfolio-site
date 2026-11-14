@@ -4,7 +4,7 @@ import type { BlogPost } from "@/lib/blog";
 import { formatDate } from "@/lib/site";
 
 /** A post as a wide row: its cover at the left, title and excerpt at the right. */
-export default function PostCard({ post }: { post: BlogPost }) {
+export default function PostCard({ post, headingLevel: Heading = "h3" }: { post: BlogPost; headingLevel?: "h2" | "h3" }) {
   return (
     <Link href={`/blog/${post.slug}`} prefetch className="group grid gap-x-[var(--m)] gap-y-6 lg:grid-cols-2 lg:items-end">
       <div className="field relative aspect-[16/10] overflow-hidden">
@@ -13,7 +13,7 @@ export default function PostCard({ post }: { post: BlogPost }) {
         )}
       </div>
       <div>
-        <h3 className="t-head">{post.title}</h3>
+        <Heading className="t-head">{post.title}</Heading>
         {post.excerpt && <p className="mt-5 max-w-[44ch]">{post.excerpt}</p>}
         <p className="mt-5 flex flex-wrap gap-x-6">
           <span className="link font-medium">Read it</span>

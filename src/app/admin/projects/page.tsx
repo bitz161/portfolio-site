@@ -52,9 +52,9 @@ export default async function AdminProjects() {
                 <td className="px-5 py-3"><StatusBadge status={p.status} /></td>
                 <td className={`px-5 py-3 font-mono text-xs ${p.visibility === "published" ? "text-brass-soft" : "text-muted"}`}>{p.visibility}</td>
                 <td className="px-5 py-3 text-right whitespace-nowrap">
-                  <Link href={`/admin/projects/${p.slug}`} className="text-ember-soft hover:underline">Edit</Link>
+                  <Link href={`/admin/projects/${p.slug}`} className="inline-block py-3.5 -my-3.5 text-ember-soft hover:underline">Edit</Link>
                   {p.visibility === "published" && (
-                    <Link href={`/projects/${p.slug}`} className="ml-4 text-muted hover:text-ink">View ↗</Link>
+                    <Link href={`/projects/${p.slug}`} className="ml-4 inline-block py-3.5 -my-3.5 text-muted hover:text-ink">View ↗</Link>
                   )}
                 </td>
               </tr>

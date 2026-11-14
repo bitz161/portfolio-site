@@ -17,6 +17,7 @@ export default async function ProjectsPage() {
     <section className="shell pt-32 pb-[calc(var(--gap)/2)]">
       <h1 className="t-poster mb-14"><Letters text={`${done} shipped, ${ahead} on the plan`} onLoad /></h1>
       <ProjectGrid
+        headingLevel="h2"
         projects={projects.map(toGrid)}
         side={
           <p className="max-w-[30ch]">

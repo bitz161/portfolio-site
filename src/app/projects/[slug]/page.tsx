@@ -71,7 +71,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
             <ol className="mt-2">
               {all.map((p) => (
                 <li key={p.slug}>
-                  <Link href={`/projects/${p.slug}`} prefetch aria-current={p.slug === slug ? "page" : undefined} className={`block py-1 transition-colors ${p.slug === slug ? "font-medium text-ink" : "text-muted hover:text-ink"}`}>
+                  <Link href={`/projects/${p.slug}`} prefetch aria-current={p.slug === slug ? "page" : undefined} className={`block py-2 transition-colors ${p.slug === slug ? "font-medium text-ink" : "text-muted hover:text-ink"}`}>
                     {p.title}
                   </Link>
                 </li>

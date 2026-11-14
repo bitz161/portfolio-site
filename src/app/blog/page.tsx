@@ -17,7 +17,7 @@ export default async function BlogPage() {
         <div className="grid gap-[calc(var(--gap)/2)]">
           {posts.map((post, i) => (
             <Reveal key={post.slug} i={i}>
-              <PostCard post={post} />
+              <PostCard post={post} headingLevel="h2" />
             </Reveal>
           ))}
         </div>

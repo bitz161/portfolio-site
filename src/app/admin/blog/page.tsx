@@ -51,8 +51,8 @@ export default async function AdminBlog() {
                 <td className={`px-5 py-3 font-mono text-xs ${p.status === "published" ? "text-brass-soft" : "text-muted"}`}>{p.status}</td>
                 <td className="px-5 py-3 text-muted">{formatDate(p.publishedAt)}</td>
                 <td className="px-5 py-3 text-right whitespace-nowrap">
-                  <Link href={`/admin/blog/${p.slug}`} className="text-ember-soft hover:underline">Edit</Link>
-                  {p.status === "published" && <Link href={`/blog/${p.slug}`} className="ml-4 text-muted hover:text-ink">View ↗</Link>}
+                  <Link href={`/admin/blog/${p.slug}`} className="inline-block py-3.5 -my-3.5 text-ember-soft hover:underline">Edit</Link>
+                  {p.status === "published" && <Link href={`/blog/${p.slug}`} className="ml-4 inline-block py-3.5 -my-3.5 text-muted hover:text-ink">View ↗</Link>}
                 </td>
               </tr>
             ))}
