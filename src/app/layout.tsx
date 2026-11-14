@@ -4,6 +4,7 @@ import "./globals.css";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 import { MotionProvider } from "@/components/motion/primitives";
+import Backdrop from "@/components/site/Backdrop";
 
 // Cabinet Grotesk (Indian Type Foundry, Fontshare free licence), self-hosted variable file.
 const cabinet = localFont({ src: "./fonts/CabinetGrotesk-Variable.woff2", variable: "--font-cabinet", weight: "100 900", display: "swap" });
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${cabinet.variable} antialiased`}>
       <body className="relative flex min-h-dvh flex-col font-sans">
+        <Backdrop />
         <MotionProvider>
           <a href="#main" className="act sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60]">
             Skip to content

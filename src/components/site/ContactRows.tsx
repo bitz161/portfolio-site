@@ -73,10 +73,10 @@ export default function ContactRows() {
         <span aria-live="polite">{done ? "Copied to your clipboard" : SITE.email}</span>
       </button>
       <a href="/Josue_Garcia_CV_DBA.pdf" download>
-        CV, database administrator
+        Database CV
       </a>
       <a href="/Josue_Garcia_CV_IT_Support.pdf" download>
-        CV, IT support
+        IT support CV
       </a>
       <a href={SITE.linkedin} {...out}>
         LinkedIn
