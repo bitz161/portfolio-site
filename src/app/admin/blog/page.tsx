@@ -12,8 +12,27 @@ export default async function AdminBlog() {
         <h1 className="h-display text-5xl">Blog</h1>
         <Link href="/admin/blog/new" className="btn">+ New post</Link>
       </div>
-      <div className="surface mt-8 overflow-x-auto">
-        <table className="w-full text-left text-sm">
+      <ul className="surface mt-8 divide-y divide-line sm:hidden">
+        {posts.length === 0 && <li className="px-5 py-6 text-muted">No posts yet.</li>}
+        {posts.map((p) => (
+          <li key={p.slug} className="flex flex-col gap-3 px-5 py-4">
+            <div>
+              <p>{p.title}</p>
+              <p className="font-mono text-xs text-muted">{p.slug}</p>
+            </div>
+            <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+              <span className={`font-mono text-xs ${p.status === "published" ? "text-brass-soft" : "text-muted"}`}>{p.status}</span>
+              <span className="text-muted">{formatDate(p.publishedAt)}</span>
+            </p>
+            <div className="flex gap-3">
+              <Link href={`/admin/blog/${p.slug}`} className="btn-ghost py-2">Edit</Link>
+              {p.status === "published" && <Link href={`/blog/${p.slug}`} className="btn-ghost py-2">View ↗</Link>}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div className="surface mt-8 hidden overflow-x-auto sm:block">
+        <table className="w-full min-w-[560px] text-left text-sm">
           <thead className="text-muted">
             <tr className="border-b border-line">
               <th className="px-5 py-3 font-normal">Title</th>

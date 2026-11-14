@@ -12,8 +12,26 @@ export default async function AdminProjects() {
         <h1 className="h-display text-5xl">Projects</h1>
         <Link href="/admin/projects/new" className="btn">+ New project</Link>
       </div>
-      <div className="surface mt-8 overflow-x-auto">
-        <table className="w-full text-left text-sm">
+      <ul className="surface mt-8 divide-y divide-line sm:hidden">
+        {projects.map((p) => (
+          <li key={p.slug} className="flex flex-col gap-3 px-5 py-4">
+            <div>
+              <p>{p.title}</p>
+              <p className="font-mono text-xs text-muted">{p.slug}</p>
+            </div>
+            <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+              <StatusBadge status={p.status} />
+              <span className={`font-mono text-xs ${p.visibility === "published" ? "text-brass-soft" : "text-muted"}`}>{p.visibility}</span>
+            </p>
+            <div className="flex gap-3">
+              <Link href={`/admin/projects/${p.slug}`} className="btn-ghost py-2">Edit</Link>
+              {p.visibility === "published" && <Link href={`/projects/${p.slug}`} className="btn-ghost py-2">View ↗</Link>}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div className="surface mt-8 hidden overflow-x-auto sm:block">
+        <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="text-muted">
             <tr className="border-b border-line">
               <th className="px-5 py-3 font-normal">Order</th>
