@@ -1,29 +1,51 @@
 import Link from "next/link";
 import { SITE } from "@/lib/site";
 
+const out = { target: "_blank", rel: "noopener noreferrer" };
+
 export default function Footer() {
   return (
-    <footer className="mt-24 border-t border-line">
-      <div className="shell flex flex-col gap-6 py-10 sm:flex-row sm:items-end sm:justify-between">
+    <footer className="site-foot">
+      <div className="shell foot-cols">
         <div>
-          <p className="font-display text-3xl">
-            Josue Garcia<span className="text-ember">.</span>
-          </p>
-          <p className="mt-2 text-sm text-muted">Self-hosted on a home server: Docker, MySQL, MinIO, Tailscale.</p>
+          <p>Pages</p>
+          <ul>
+            <li><Link className="link" href="/projects">Work</Link></li>
+            <li><Link className="link" href="/blog">Writing</Link></li>
+            <li><Link className="link" href="/about">About</Link></li>
+          </ul>
         </div>
-        <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
-          <li><Link className="transition-colors hover:text-ink" href="/projects">Work</Link></li>
-          <li><Link className="transition-colors hover:text-ink" href="/blog">Writing</Link></li>
-          <li><Link className="transition-colors hover:text-ink" href="/about">About</Link></li>
-          <li><a className="transition-colors hover:text-ink" href={SITE.github} target="_blank" rel="noopener noreferrer">GitHub</a></li>
-          <li><a className="transition-colors hover:text-ink" href={SITE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-          <li><a className="transition-colors hover:text-ink" href={`mailto:${SITE.email}`}>Email</a></li>
-        </ul>
+        <div>
+          <p>Elsewhere</p>
+          <ul>
+            <li><a className="link" href={SITE.github} {...out}>GitHub</a></li>
+            <li><a className="link" href={SITE.linkedin} {...out}>LinkedIn</a></li>
+            <li><a className="link" href={`mailto:${SITE.email}`}>Email</a></li>
+          </ul>
+        </div>
+        <div>
+          <p>This site</p>
+          <p>Self-hosted on a home server: Docker, MySQL, MinIO, Tailscale.</p>
+          <p>
+            If it is down, <a className="link" href={SITE.statusPage}>here is how to reach me</a>.
+          </p>
+        </div>
+        <div>
+          <p>Photographs</p>
+          <p>
+            <a className="link" href="https://unsplash.com/photos/M5tzZtFCOfs" {...out}>Server racks</a> by Taylor Vick and{" "}
+            <a className="link" href="https://unsplash.com/photos/eVWWr6nmDf8" {...out}>fibre switch</a> by Kirill Sh, on Unsplash.
+          </p>
+        </div>
       </div>
-      <p className="shell pb-8 font-mono text-xs text-muted">
-        © 2026 · If this site is down,{" "}
-        <a className="text-steel-soft underline underline-offset-4" href={SITE.statusPage}>here is how to reach me</a>.
-      </p>
+      <span />
+      <div className="shell">
+        {/* fitted to the width at every size: the name never wraps */}
+        <svg className="foot-word" viewBox="0 0 640 96" role="img" aria-label="Josue Garcia">
+          <text x="0" y="88" fontSize="118" textLength="640" lengthAdjust="spacingAndGlyphs">Josue Garcia</text>
+        </svg>
+        <p className="t-small mt-5">© 2026 Josue Garcia</p>
+      </div>
     </footer>
   );
 }

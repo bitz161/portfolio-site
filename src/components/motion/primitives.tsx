@@ -1,111 +1,105 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { animate, motion, MotionConfig, useInView, useSpring } from "motion/react";
+import { animate, motion, MotionConfig, useInView, useScroll, useSpring, useTransform } from "motion/react";
 
 export const EMPH = [0.05, 0.7, 0.1, 1] as const;
-export const STD = [0.2, 0, 0, 1] as const;
 
 /** App-wide: honor the OS reduce-motion setting (transforms off, opacity fades stay). */
 export function MotionProvider({ children }: { children: ReactNode }) {
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }
 
-/** Fades + rises into view once. `i` staggers siblings by 90 ms. */
+/** Fades + rises into view once. `i` staggers siblings by 80 ms. */
 export function Reveal({ children, i = 0, className }: { children: ReactNode; i?: number; className?: string }) {
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.9, ease: EMPH, delay: i * 0.09 }}
+      transition={{ duration: 0.8, ease: EMPH, delay: i * 0.08 }}
     >
       {children}
     </motion.div>
   );
 }
 
-/** Counts from 0 to `to` with an exponential ease-out when scrolled into view. */
-export function CountUp({ to, decimals = 0, suffix = "" }: { to: number; decimals?: number; suffix?: string }) {
+/**
+ * Sets a line letter by letter: each glyph swings up from below its own baseline, in order.
+ * Words stay unbreakable so wrapping is the same as plain text. Once the last glyph has landed the
+ * line goes back to being plain text, so it selects, wraps and reads aloud like any other.
+ */
+export function Letters({ text, step = 0.028, delay = 0, onLoad = false }: { text: string; step?: number; delay?: number; onLoad?: boolean }) {
+  const [done, setDone] = useState(false);
+  if (done) return <>{text}</>;
+  const last = [...text.replace(/ /g, "")].length - 1;
+  let n = 0;
+  return (
+    <motion.span aria-label={text} initial="hide" {...(onLoad ? { animate: "show" } : { whileInView: "show", viewport: { once: true, amount: 0.5 } })}>
+      {text.split(" ").map((word, w) => (
+        <span key={w} aria-hidden>
+          {w > 0 && " "}
+          <span style={{ display: "inline-block", whiteSpace: "nowrap" }}>
+            {[...word].map((ch) => {
+              const i = n++;
+              return (
+                <motion.span
+                  key={i}
+                  style={{ display: "inline-block", transformOrigin: "0 100%" }}
+                  variants={{ hide: { y: "0.55em", opacity: 0, rotate: 7 }, show: { y: 0, opacity: 1, rotate: 0, transition: { duration: 0.9, ease: EMPH, delay: delay + i * step } } }}
+                  onAnimationComplete={i === last ? (v) => v === "show" && setDone(true) : undefined}
+                >
+                  {ch}
+                </motion.span>
+              );
+            })}
+          </span>
+        </span>
+      ))}
+    </motion.span>
+  );
+}
+
+/** A list whose children arrive one after another when it scrolls into view. Renders the given tag. */
+export function Stagger({ children, className, as = "ul", gap = 0.06 }: { children: ReactNode; className?: string; as?: "ul" | "ol" | "div"; gap?: number }) {
+  const Tag = motion[as];
+  return (
+    <Tag className={className} initial="hide" whileInView="show" viewport={{ once: true, amount: 0.1 }} variants={{ show: { transition: { staggerChildren: gap } } }}>
+      {children}
+    </Tag>
+  );
+}
+export function StaggerItem({ children, className, as = "li", from = "below" }: { children: ReactNode; className?: string; as?: "li" | "div"; from?: "below" | "left" }) {
+  const Tag = motion[as];
+  const hide = from === "left" ? { opacity: 0, x: -48 } : { opacity: 0, y: 28 };
+  return (
+    <Tag className={className} variants={{ hide, show: { opacity: 1, x: 0, y: 0, transition: { duration: 0.8, ease: EMPH } } }}>
+      {children}
+    </Tag>
+  );
+}
+
+/** A figure that counts up to its value once, when seen. Server render and no-script show the final value. */
+export function CountUp({ to, decimals = 0 }: { to: number; decimals?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
-  const [v, setV] = useState(0);
   useEffect(() => {
-    if (!inView) return;
-    const c = animate(0, to, { duration: 1.8, ease: [0.16, 1, 0.3, 1], onUpdate: setV });
+    if (!inView || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const c = animate(0, to, { duration: 1.6, ease: [0.16, 1, 0.3, 1], onUpdate: (v) => ref.current && (ref.current.textContent = v.toFixed(decimals)) });
     return () => c.stop();
-  }, [inView, to]);
-  return (
-    <span ref={ref} className="tabular-nums">
-      {v.toFixed(decimals)}
-      {suffix}
-    </span>
-  );
+  }, [inView, to, decimals]);
+  return <span ref={ref}>{to.toFixed(decimals)}</span>;
 }
 
-/** Pulls its child toward the cursor when the pointer is near, springs back on leave. */
-export function Magnetic({ children, strength = 0.35 }: { children: ReactNode; strength?: number }) {
+/** Moves its child slower than the page while it crosses the screen (a few percent of travel). */
+export function Drift({ children, className, travel = 40 }: { children: ReactNode; className?: string; travel?: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const x = useSpring(0, { stiffness: 220, damping: 14 });
-  const y = useSpring(0, { stiffness: 220, damping: 14 });
-  useEffect(() => {
-    if (!matchMedia("(pointer: fine)").matches) return;
-    const onMove = (e: PointerEvent) => {
-      const el = ref.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const dx = e.clientX - (r.left + r.width / 2);
-      const dy = e.clientY - (r.top + r.height / 2);
-      const near = Math.hypot(dx, dy) < Math.max(r.width, 120);
-      x.set(near ? dx * strength : 0);
-      y.set(near ? dy * strength : 0);
-    };
-    addEventListener("pointermove", onMove);
-    return () => removeEventListener("pointermove", onMove);
-  }, [x, y, strength]);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y = useSpring(useTransform(scrollYProgress, [0, 1], [travel, -travel]), { stiffness: 120, damping: 24 });
   return (
-    <motion.div ref={ref} style={{ x, y }} className="inline-block">
+    <motion.div ref={ref} className={className} style={{ y }}>
       {children}
     </motion.div>
-  );
-}
-
-/** Ambient layer: three blurred orbs drifting (CSS) plus cursor parallax (springs). Orb 2 counter-moves. */
-export function Orbs() {
-  const depths = [70, -100, 45];
-  const springs = [
-    [useSpring(0, { stiffness: 40, damping: 12 }), useSpring(0, { stiffness: 40, damping: 12 })],
-    [useSpring(0, { stiffness: 40, damping: 12 }), useSpring(0, { stiffness: 40, damping: 12 })],
-    [useSpring(0, { stiffness: 40, damping: 12 }), useSpring(0, { stiffness: 40, damping: 12 })],
-  ];
-  useEffect(() => {
-    if (!matchMedia("(pointer: fine)").matches) return;
-    const onMove = (e: PointerEvent) => {
-      const nx = e.clientX / innerWidth - 0.5;
-      const ny = e.clientY / innerHeight - 0.5;
-      springs.forEach(([sx, sy], i) => {
-        sx.set(nx * depths[i]);
-        sy.set(ny * depths[i]);
-      });
-    };
-    addEventListener("pointermove", onMove);
-    return () => removeEventListener("pointermove", onMove);
-    // springs/depths are stable for the component's life
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const orbs = [
-    { pos: "left-[5%] top-[6%]", size: "h-[440px] w-[440px]", color: "bg-steel", extra: "opacity-40" },
-    { pos: "right-[2%] top-[30%]", size: "h-[380px] w-[380px]", color: "bg-ember", extra: "opacity-30 [animation-direction:alternate-reverse] [animation-duration:24s]" },
-    { pos: "left-[35%] top-[65%]", size: "h-[320px] w-[320px]", color: "bg-brass", extra: "opacity-20 [animation-duration:28s]" },
-  ];
-  return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {orbs.map((o, i) => (
-        <motion.i key={i} className={`orb absolute block ${o.pos}`} style={{ x: springs[i][0], y: springs[i][1] }}>
-          <b className={`${o.size} ${o.color} ${o.extra}`} />
-        </motion.i>
-      ))}
-    </div>
   );
 }

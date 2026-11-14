@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
-import { MotionProvider, Orbs } from "@/components/motion/primitives";
+import { MotionProvider } from "@/components/motion/primitives";
 
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
-const instrument = Instrument_Serif({ variable: "--font-instrument", subsets: ["latin"], weight: "400", style: ["normal", "italic"] });
-const jetbrains = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"] });
+// Cabinet Grotesk (Indian Type Foundry, Fontshare free licence), self-hosted variable file.
+const cabinet = localFont({ src: "./fonts/CabinetGrotesk-Variable.woff2", variable: "--font-cabinet", weight: "100 900", display: "swap" });
 
 export const metadata: Metadata = {
   // SITE_URL is set to the public domain once it is live; until then absolute URLs stay on the tailnet name.
@@ -20,13 +19,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${inter.variable} ${instrument.variable} ${jetbrains.variable} antialiased`}>
-      <body className="flex min-h-dvh flex-col font-sans">
+    <html lang="en" className={`${cabinet.variable} antialiased`}>
+      <body className="relative flex min-h-dvh flex-col font-sans">
         <MotionProvider>
-          <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-bg">
+          <a href="#main" className="act sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60]">
             Skip to content
           </a>
-          <Orbs />
           <Nav />
           <main id="main" className="flex-1">{children}</main>
           <Footer />

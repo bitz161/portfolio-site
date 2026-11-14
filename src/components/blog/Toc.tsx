@@ -21,21 +21,17 @@ export default function Toc({ items }: { items: Heading[] }) {
 
   return (
     <nav aria-label="On this page">
-      <p className="label">On this page</p>
-      <ol className="relative mt-4 border-l border-line">
+      <p className="font-medium">On this page</p>
+      <ol className="mt-3">
         {items.map((h) => (
           <li key={h.id} className="relative">
             {active === h.id && (
-              <motion.span
-                layoutId="toc-marker"
-                className="absolute top-0 -left-px h-full w-0.5 bg-ember"
-                transition={{ type: "spring", stiffness: 400, damping: 34 }}
-              />
+              <motion.span layoutId="toc-marker" className="absolute top-0 left-0 h-full w-1 bg-ink" transition={{ type: "spring", stiffness: 400, damping: 34 }} />
             )}
             <a
               href={`#${h.id}`}
               aria-current={active === h.id ? "location" : undefined}
-              className={`block py-1.5 text-sm leading-snug transition-colors duration-150 ${h.depth === 3 ? "pl-8" : "pl-4"} ${active === h.id ? "text-ink" : "text-muted hover:text-ink"}`}
+              className={`t-small block py-1.5 transition-colors duration-150 ${h.depth === 3 ? "pl-8" : "pl-4"} ${active === h.id ? "text-ink" : "text-muted hover:text-ink"}`}
             >
               {h.text}
             </a>

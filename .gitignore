@@ -42,3 +42,7 @@ next-env.d.ts
 
 # brainstorm companion mockups
 .superpowers/
+
+# design tool working files
+.taste-skill/
+.impeccable/

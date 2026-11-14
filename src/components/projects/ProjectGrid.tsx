@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState, ViewTransition } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useState, type ReactNode } from "react";
 import type { ProjectStatus } from "@/lib/projects";
 import { STATUS_LABEL } from "@/lib/site";
-import { EMPH } from "@/components/motion/primitives";
-import StatusBadge from "./StatusBadge";
+import { Stagger, StaggerItem } from "@/components/motion/primitives";
 
 export type GridProject = {
   slug: string;
@@ -14,85 +12,57 @@ export type GridProject = {
   summary: string;
   status: ProjectStatus;
   skills: string[];
-  accent: string;
+  updated: string;
 };
 
-const FILTERS: (ProjectStatus | "all")[] = ["all", "done", "in-progress", "not-started"];
+const ORDER: ProjectStatus[] = ["done", "in-progress", "not-started"];
 
-export default function ProjectGrid({ projects }: { projects: GridProject[] }) {
-  const [filter, setFilter] = useState<ProjectStatus | "all">("all");
-  const shown = projects.filter((p) => filter === "all" || p.status === filter);
-  const count = (f: ProjectStatus | "all") => projects.filter((p) => f === "all" || p.status === f).length;
+/**
+ * The work as a plain ledger grouped by status. On wide screens the row in hand shows its
+ * summary in the panel at the right; `side` (the section's heading) sits in the left column.
+ */
+export default function ProjectGrid({ projects, side }: { projects: GridProject[]; side: ReactNode }) {
+  const [slug, setSlug] = useState(projects[0]?.slug);
+  const shown = projects.find((p) => p.slug === slug) ?? projects[0];
 
   return (
-    <div>
-      <div role="group" aria-label="Filter projects by status" className="mb-6 flex flex-wrap gap-2">
-        {FILTERS.filter((f) => count(f) > 0).map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            aria-pressed={filter === f}
-            className={`relative rounded-full border px-4 py-2 text-sm transition-[color,border-color,transform] duration-150 ease-std active:scale-95 ${filter === f ? "border-ink text-bg" : "border-line text-muted hover:border-white/25 hover:text-ink"}`}
-          >
-            {filter === f && (
-              <motion.span
-                layoutId="filter-pill"
-                className="absolute inset-0 -z-10 rounded-full bg-ink"
-                transition={{ type: "spring", stiffness: 380, damping: 30 }}
-              />
-            )}
-            {f === "all" ? "All" : STATUS_LABEL[f]}
-            <span className="ml-2 font-mono text-xs opacity-60">{count(f)}</span>
-          </button>
-        ))}
+    <div className="ledger-wrap">
+      <div className="ledger-side">{side}</div>
+
+      <div className="ledger">
+        {ORDER.map((status) => {
+          const group = projects.filter((p) => p.status === status);
+          if (group.length === 0) return null;
+          return (
+            <section key={status} className="ledger-group">
+              <h3 className="soft pb-1">
+                {STATUS_LABEL[status]}, {group.length}
+              </h3>
+              <Stagger gap={0.04}>
+                {group.map((p) => (
+                  <StaggerItem key={p.slug}>
+                    <Link href={`/projects/${p.slug}`} prefetch className="ledger-row" onMouseEnter={() => setSlug(p.slug)} onFocus={() => setSlug(p.slug)}>
+                      <span className="font-medium">{p.title}</span>
+                      <span className="when lg:order-last">{p.updated}</span>
+                      <span className="kind">{p.skills.slice(0, 2).join(", ") || "Write-up of the plan"}</span>
+                    </Link>
+                  </StaggerItem>
+                ))}
+              </Stagger>
+            </section>
+          );
+        })}
       </div>
 
-      <motion.ul layout className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:auto-rows-[minmax(17rem,auto)] lg:grid-flow-dense">
-        <AnimatePresence mode="popLayout" initial={false}>
-          {shown.map((p, i) => (
-            <motion.li
-              key={p.slug}
-              layout
-              initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1, transition: { duration: 0.55, ease: EMPH, delay: i * 0.03 } }}
-              exit={{ opacity: 0, scale: 0.6, transition: { duration: 0.2, ease: [0.3, 0, 1, 1] } }}
-              transition={{ layout: { duration: 0.65, ease: EMPH } }}
-              // first visible project is the featured tile: 2x2 on desktop, full summary and stack
-              className={i === 0 ? "sm:col-span-2 lg:row-span-2" : undefined}
-            >
-              <ProjectTile p={p} index={projects.indexOf(p)} featured={i === 0} />
-            </motion.li>
-          ))}
-        </AnimatePresence>
-      </motion.ul>
+      {shown && (
+        <aside className="ledger-preview" aria-hidden>
+          <div key={shown.slug}>
+            <p className="t-lead font-medium">{shown.title}</p>
+            <p className="mt-4">{shown.summary}</p>
+            {shown.skills.length > 0 && <p className="soft mt-4">{shown.skills.join(", ")}</p>}
+          </div>
+        </aside>
+      )}
     </div>
-  );
-}
-
-function ProjectTile({ p, index, featured }: { p: GridProject; index: number; featured: boolean }) {
-  return (
-    <Link href={`/projects/${p.slug}`} prefetch className="group block h-full">
-      <ViewTransition name={`project-${p.slug}`} share="morph" default="none">
-        <article
-          className={`surface relative flex h-full flex-col overflow-hidden ${featured ? "p-8 sm:p-10" : "p-6"} transition-[border-color,transform] duration-300 ease-std group-hover:-translate-y-1 group-hover:border-white/20`}
-          style={{ background: `linear-gradient(160deg, color-mix(in srgb, ${p.accent} 18%, transparent), rgb(255 255 255 / 0.02) 60%)` }}
-        >
-          <div className="flex items-start justify-between">
-            <span className={`font-display leading-none text-white/15 ${featured ? "text-8xl" : "text-5xl"}`}>{String(index + 1).padStart(2, "0")}</span>
-            <StatusBadge status={p.status} />
-          </div>
-          <h3 className={`font-display leading-tight ${featured ? "mt-auto pt-16 text-[clamp(2rem,3.4vw,3.2rem)]" : "mt-10 text-2xl"}`}>{p.title}</h3>
-          <p className={`mt-3 leading-relaxed text-muted ${featured ? "max-w-2xl text-base" : "line-clamp-4 text-sm"}`}>{p.summary}</p>
-          <div className={`flex items-end justify-between gap-4 pt-6 ${featured ? "mt-8" : "mt-auto"}`}>
-            <div className="flex flex-wrap gap-1.5">
-              {(featured ? p.skills : p.skills.slice(0, 3)).map((s) => (
-                <span key={s} className="chip">{s}</span>
-              ))}
-            </div>
-            <span aria-hidden className="text-xl text-muted transition-transform duration-300 ease-std group-hover:translate-x-1 group-hover:text-ink">→</span>
-          </div>
-        </article>
-      </ViewTransition>
-    </Link>
   );
 }

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { getProjects } from "@/lib/projects";
 import { toGrid } from "@/lib/derived";
 import ProjectGrid from "@/components/projects/ProjectGrid";
-import SectionHead from "@/components/site/SectionHead";
-import { Reveal } from "@/components/motion/primitives";
+import { Letters } from "@/components/motion/primitives";
+import Band from "@/components/site/Band";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Work" };
@@ -11,16 +11,19 @@ export const metadata: Metadata = { title: "Work" };
 export default async function ProjectsPage() {
   const projects = await getProjects();
   return (
-    <section className="shell pt-36 pb-16">
-      <SectionHead
-        index="Work"
-        label={`${projects.length} projects`}
-        title={<>Every project, <em className="text-ember-soft">documented.</em></>}
-        desc="Database administration first, data engineering next. Done, in progress and planned, so you can see where it's heading."
+    <>
+    <section className="shell pt-32 pb-[calc(var(--gap)/2)]">
+      <h1 className="t-poster mb-14"><Letters text="Every project, documented" onLoad /></h1>
+      <ProjectGrid
+        projects={projects.map(toGrid)}
+        side={
+          <p className="max-w-[30ch]">
+            {projects.length} projects. Database administration first, data engineering next. Done, in progress and planned, so you can see where it&apos;s heading.
+          </p>
+        }
       />
-      <Reveal i={2}>
-        <ProjectGrid projects={projects.map(toGrid)} />
-      </Reveal>
     </section>
+    <Band show="plan" className="pb-[calc(var(--gap)/2)]" />
+    </>
   );
 }

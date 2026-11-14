@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ViewTransition } from "react";
 import { getProject, getProjects } from "@/lib/projects";
-import { accentOf, formatDate } from "@/lib/site";
-import { Reveal } from "@/components/motion/primitives";
+import { formatDate } from "@/lib/site";
+import { Letters, Reveal } from "@/components/motion/primitives";
 import StatusBadge from "@/components/projects/StatusBadge";
 import MetricCard from "@/components/projects/MetricCard";
 import Markdown from "@/components/Markdown";
@@ -25,120 +24,100 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
   const idx = all.findIndex((p) => p.slug === slug);
   const prev = idx > 0 ? all[idx - 1] : null;
   const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
-  const accent = accentOf(slug);
 
   return (
-    <article className="shell pt-28 pb-16">
-      <Link href="/projects" className="kicker transition-colors hover:text-ink">← All work</Link>
+    <article className="pt-32">
+      <header className="shell">
+        <h1 className="t-title"><Letters text={project.title} step={0.012} onLoad /></h1>
+        <p className="t-lead fade-in mt-8 max-w-[52ch]" style={{ "--d": "350ms" } as React.CSSProperties}>{project.summary}</p>
+      </header>
 
-      {/* Hero: the tile from the grid morphs into this card */}
-      <ViewTransition name={`project-${slug}`} share="morph" default="none">
-        <header
-          className="surface relative mt-6 overflow-hidden p-8 sm:p-12"
-          style={{ background: `linear-gradient(160deg, color-mix(in srgb, ${accent} 22%, transparent), rgb(255 255 255 / 0.02) 65%)` }}
-        >
-          <div className="flex flex-wrap items-center gap-3">
-            <StatusBadge status={project.status} />
-            <span className="kicker">{project.track}</span>
-          </div>
-          <h1 className="h-display mt-8 max-w-4xl text-[clamp(2.4rem,6vw,4.8rem)]">{project.title}</h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">{project.summary}</p>
-        </header>
-      </ViewTransition>
+      <div className="shell about detail mt-16">
+        {/* Side facts */}
+        <aside className="lg:sticky lg:top-8 lg:self-start">
+          <dl className="grid max-w-[300px] gap-4">
+            <div>
+              <dt className="soft">Status</dt>
+              <dd><StatusBadge status={project.status} /></dd>
+            </div>
+            <div>
+              <dt className="soft">Track</dt>
+              <dd>{project.track}</dd>
+            </div>
+            <div>
+              <dt className="soft">Updated</dt>
+              <dd>{formatDate(project.updatedAt)}</dd>
+            </div>
+            {project.skills?.length > 0 && (
+              <div>
+                <dt className="soft">Stack</dt>
+                <dd>{project.skills.join(", ")}</dd>
+              </div>
+            )}
+            {project.links.length > 0 && (
+              <div>
+                <dt className="soft">Links</dt>
+                {project.links.map((l) => (
+                  <dd key={l.url}>
+                    <a href={l.url} target="_blank" rel="noopener noreferrer" className="link">{l.label}</a>
+                  </dd>
+                ))}
+              </div>
+            )}
+          </dl>
 
-      <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <nav aria-label="Project chain" className="mt-10 hidden max-w-[300px] lg:block">
+            <p className="soft">Project chain</p>
+            <ol className="mt-2">
+              {all.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/projects/${p.slug}`} prefetch aria-current={p.slug === slug ? "page" : undefined} className={`block py-1 transition-colors ${p.slug === slug ? "font-medium text-ink" : "text-muted hover:text-ink"}`}>
+                    {p.title}
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </aside>
+
         <div className="min-w-0">
           {project.description && project.description !== project.summary && (
             <Reveal>
-              <p className="mb-10 border-l-2 border-ember pl-5 text-lg leading-relaxed text-ink/85">{project.description}</p>
+              <p className="t-lead mb-12">{project.description}</p>
             </Reveal>
           )}
 
           {project.metricBefore && project.metricAfter && (
-            <Reveal className="mb-12 max-w-md">
-              <p className="label mb-4">Result</p>
+            <Reveal className="mb-12">
               <MetricCard before={project.metricBefore} after={project.metricAfter} label={project.metricLabel} />
             </Reveal>
           )}
 
           {project.imageKey && (
-            <Reveal className="relative mb-12 aspect-video overflow-hidden rounded-2xl border border-line">
+            <Reveal className="field relative mb-12 aspect-video overflow-hidden">
               <Image src={`/api/files/${project.imageKey}`} alt={`${project.title} screenshot`} fill sizes="(min-width: 1024px) 760px, 100vw" className="object-cover" />
             </Reveal>
           )}
 
-          {project.details ? (
-            <Markdown>{project.details}</Markdown>
-          ) : (
-            <p className="surface p-6 text-muted">The write-up for this one is still being drafted.</p>
-          )}
+          {project.details ? <Markdown>{project.details}</Markdown> : <p className="field p-6">The write-up for this one is still being drafted.</p>}
         </div>
-
-        {/* Rail */}
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="surface p-6">
-            <p className="label">Project chain</p>
-            <ol className="mt-4 space-y-1">
-              {all.map((p, i) => (
-                <li key={p.slug}>
-                  <Link
-                    href={`/projects/${p.slug}`}
-                    prefetch
-                    aria-current={p.slug === slug ? "page" : undefined}
-                    className={`flex gap-3 rounded-lg px-2 py-1.5 text-sm transition-colors ${p.slug === slug ? "bg-white/8 text-ink" : "text-muted hover:text-ink"}`}
-                  >
-                    <span className="font-mono text-xs leading-5 opacity-60">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="line-clamp-2">{p.title}</span>
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          {project.skills?.length > 0 && (
-            <div className="surface mt-4 p-6">
-              <p className="label">Stack</p>
-              <ul className="mt-4 flex flex-wrap gap-2">
-                {project.skills.map((s) => (
-                  <li key={s} className="chip">{s}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {project.links.length > 0 && (
-            <div className="surface mt-4 p-6">
-              <p className="label">Links</p>
-              <ul className="mt-4 space-y-2 text-sm">
-                {project.links.map((l) => (
-                  <li key={l.url}>
-                    <a href={l.url} target="_blank" rel="noopener noreferrer" className="text-ember-soft underline-offset-4 hover:underline">
-                      {l.label} ↗
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <p className="mt-4 px-2 font-mono text-xs text-muted">Updated {formatDate(project.updatedAt)}</p>
-        </aside>
       </div>
 
-      {/* Prev / next */}
-      <nav aria-label="More projects" className="mt-20 grid gap-4 border-t border-line pt-10 sm:grid-cols-2">
-        {prev ? (
-          <Link href={`/projects/${prev.slug}`} prefetch className="group surface p-6 transition-colors hover:border-white/20">
-            <span className="kicker">← Previous</span>
-            <p className="mt-2 font-display text-2xl transition-transform duration-300 ease-std group-hover:-translate-x-1">{prev.title}</p>
-          </Link>
-        ) : <span />}
-        {next && (
-          <Link href={`/projects/${next.slug}`} prefetch className="group surface p-6 text-right transition-colors hover:border-white/20">
-            <span className="kicker">Next →</span>
-            <p className="mt-2 font-display text-2xl transition-transform duration-300 ease-std group-hover:translate-x-1">{next.title}</p>
+      {/* Previous / next, as display rows */}
+      <nav aria-label="More projects" className="rows mt-[calc(var(--gap)/2)]">
+        {prev && (
+          <Link href={`/projects/${prev.slug}`} prefetch>
+            <span className="t-head font-normal">← {prev.title}</span>
           </Link>
         )}
+        {next && (
+          <Link href={`/projects/${next.slug}`} prefetch>
+            <span className="t-head font-normal">{next.title} →</span>
+          </Link>
+        )}
+        <Link href="/projects">
+          <span className="t-head font-normal">All work</span>
+        </Link>
       </nav>
     </article>
   );

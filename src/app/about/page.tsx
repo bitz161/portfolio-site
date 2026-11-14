@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { SITE } from "@/lib/site";
-import { Reveal } from "@/components/motion/primitives";
-import CopyEmail from "@/components/site/CopyEmail";
-import ActionLink from "@/components/site/ActionLink";
+import { Letters, Stagger, StaggerItem } from "@/components/motion/primitives";
+import AboutBlock from "@/components/site/AboutBlock";
+import ContactRows from "@/components/site/ContactRows";
+import Band from "@/components/site/Band";
 
 export const metadata: Metadata = { title: "About" };
 
@@ -18,59 +17,36 @@ const STACK = ["MySQL 8.4", "PostgreSQL", "ProxySQL", "Orchestrator", "Debezium"
 
 export default function AboutPage() {
   return (
-    <div className="shell pt-36 pb-16">
-      <section className="grid items-end gap-12 lg:grid-cols-[minmax(0,1fr)_380px]">
-        <div>
-          <p className="kicker fade-in">About</p>
-          <h1 className="h-display mt-4 text-[clamp(3rem,8vw,6rem)]">
-            <span className="mask"><span>Josue</span></span> <span className="mask"><span style={{ "--i": 1 } as React.CSSProperties}><em className="text-ember-soft">Garcia.</em></span></span>
-          </h1>
-          <p className="fade-in mt-8 max-w-xl text-lg leading-relaxed text-muted" style={{ "--d": "600ms" } as React.CSSProperties}>
-            I keep databases fast, replicated and recoverable, and I&apos;m growing that into data engineering. I learn by running
-            the real thing: this site, its database and the pipelines behind it all live on a server in my home, wired together
-            with the same tools teams use in production.
-          </p>
-        </div>
-        <Reveal i={1} className="relative mx-auto aspect-[4/5] w-full max-w-[380px] overflow-hidden rounded-3xl border border-line bg-gradient-to-b from-steel/25 to-ember/15">
-          <Image src="/hero-portrait-cutout.png" alt="Portrait of Josue Garcia" fill priority sizes="380px" className="object-cover object-top" />
-        </Reveal>
-      </section>
+    <>
+      <div className="shell pt-32">
+        <h1 className="t-poster mb-12"><Letters text="About Josue Garcia" onLoad /></h1>
+        <AboutBlock priority />
 
-      <section className="mt-28">
-        <Reveal><p className="label">The path</p></Reveal>
-        <ol className="relative mt-8 space-y-4 border-l border-line pl-8">
-          {PATH.map((step, i) => (
-            <li key={step.title}>
-              <Reveal i={i} className="surface relative p-6">
-                <span aria-hidden className={`absolute top-8 -left-[37px] h-3 w-3 rounded-full ring-4 ring-bg ${i === 0 ? "bg-ember" : "bg-white/20"}`} />
-                <p className="kicker">{step.when}</p>
-                <h2 className="mt-2 font-display text-3xl">{step.title}</h2>
-                <p className="mt-2 max-w-2xl text-muted">{step.body}</p>
-              </Reveal>
-            </li>
-          ))}
-        </ol>
-      </section>
+        <section className="sec pb-0">
+          <h2 className="t-head mb-8"><Letters text="The path" /></h2>
+          <Stagger as="ol" className="steps">
+            {PATH.map((step, i) => (
+              <StaggerItem key={step.title} className={i % 2 === 0 ? "field px-4" : "px-4"}>
+                <span className={i === 0 ? "font-medium" : "soft"}>{step.when}</span>
+                <h3 className="t-lead font-medium">{step.title}</h3>
+                <p className="max-w-[60ch]">{step.body}</p>
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </section>
 
-      <section className="mt-28 grid gap-4 lg:grid-cols-2">
-        <Reveal className="surface p-8">
-          <p className="label">Home lab stack</p>
-          <ul className="mt-5 flex flex-wrap gap-2">
-            {STACK.map((t) => <li key={t} className="chip text-ink">{t}</li>)}
-          </ul>
-        </Reveal>
-        <Reveal i={1} className="surface flex flex-col justify-between gap-8 p-8">
-          <div>
-            <p className="label">Get in touch</p>
-            <p className="mt-3 text-muted">Open to database administration and data engineering roles.</p>
-          </div>
-          <CopyEmail email={SITE.email} />
-          <div className="flex flex-wrap gap-3">
-            <ActionLink href={SITE.linkedin} icon="out" variant="ghost">LinkedIn</ActionLink>
-            <ActionLink href={SITE.github} icon="out" variant="ghost">GitHub</ActionLink>
-          </div>
-        </Reveal>
+        <section className="sec pairs wide-key">
+          <h2 className="t-head"><Letters text="Home lab stack" /></h2>
+          <p className="t-lead max-w-[40ch]">{STACK.join(", ")}.</p>
+        </section>
+      </div>
+
+      <Band show="incident" className="pb-[calc(var(--gap)/2)]" />
+
+      <section>
+        <h2 className="shell t-head mb-10"><Letters text="Get in touch" /></h2>
+        <ContactRows />
       </section>
-    </div>
+    </>
   );
 }
