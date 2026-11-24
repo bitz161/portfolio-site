@@ -5,6 +5,7 @@ import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 import { MotionProvider } from "@/components/motion/primitives";
 import Backdrop from "@/components/site/Backdrop";
+import ToTop from "@/components/site/ToTop";
 
 // Cabinet Grotesk (Indian Type Foundry, Fontshare free licence), self-hosted variable file.
 const cabinet = localFont({ src: "./fonts/CabinetGrotesk-Variable.woff2", variable: "--font-cabinet", weight: "100 900", display: "swap" });
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Nav />
           <main id="main" className="flex-1">{children}</main>
           <Footer />
+          <ToTop />
         </MotionProvider>
       </body>
     </html>

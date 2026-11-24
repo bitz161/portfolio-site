@@ -167,6 +167,74 @@ body {
   .btn-ghost:hover {
     background: #2c4785;
   }
+  /* back-to-top: cream disc inside a ring that fills with scroll progress */
+  .to-top {
+    position: fixed;
+    right: var(--m);
+    bottom: calc(var(--m) + env(safe-area-inset-bottom));
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    color: var(--color-bg);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .to-top-ring {
+    position: absolute;
+    inset: 0;
+    rotate: -90deg;
+    fill: none;
+    stroke-width: 2;
+  }
+  .to-top-track {
+    stroke: var(--color-line);
+  }
+  .to-top-fill {
+    stroke: var(--color-ink);
+    stroke-linecap: round;
+  }
+  .to-top-face {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--color-ink);
+    box-shadow: 0 8px 24px -6px rgb(1 7 54 / 0.7);
+    transition:
+      background-color 160ms var(--ease-std),
+      transform 160ms var(--ease-std);
+  }
+  .to-top-face svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: transform 280ms var(--ease-emph);
+  }
+  .to-top:hover .to-top-face {
+    background: #ffffff;
+  }
+  .to-top:hover .to-top-face svg {
+    transform: translateY(-3px);
+  }
+  .to-top:active .to-top-face {
+    transform: scale(0.92);
+  }
+  .to-top:focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 4px;
+  }
+  @media (max-width: 640px) {
+    .to-top {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+    .to-top-face {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+  }
   .act-sm {
     min-height: 2.75rem;
     padding: 0 1rem;
